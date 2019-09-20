@@ -1,0 +1,10 @@
+.idea/
+venv/
+backup/
+data/
+mongo_db/
+*.pyc
+*.log
+*.cfg
+*.csv
+__pycache__/
