@@ -32,3 +32,6 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         main_page.specify_search(self.stext)
         time.sleep(10)
+
+
+
