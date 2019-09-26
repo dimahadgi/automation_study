@@ -13,3 +13,4 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.SEARCH)
         )
         search_field.send_keys(text)
+
