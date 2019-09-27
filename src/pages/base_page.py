@@ -15,8 +15,6 @@ class BasePage:
     """
     Base class to initialize the base page that will be called from all pages
     """
-    time_to_wait = 40
-    sync_timeout = 20
 
     def __init__(self, driver):
         self.driver = driver
