@@ -12,7 +12,7 @@ class LoginTestSuite(unittest.TestCase):
     URL = 'https://acme.qc2.blnsearch.net'
 
     def setUp(self):
-        self.driver = webdriver.Chrome()
+        self.driver = webdriver.Chrome(executable_path='/home/okura/PycharmProjects/chromedriver')
         self.driver.get(self.URL)
         self.email = 'admin@acme.com'
         self.password = 'password'
@@ -29,6 +29,10 @@ class LoginTestSuite(unittest.TestCase):
         time.sleep(10)
 
     def test_main_page(self):
+        login_page = LoginPage(self.driver)
+        login_page.specify_email(self.email)
+        login_page.specify_pass(self.password)
+        login_page.press_login()
         main_page = MainPage(self.driver)
         main_page.specify_search(self.stext)
         time.sleep(10)
