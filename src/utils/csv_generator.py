@@ -1,4 +1,5 @@
 import random
+import os
 from faker import Faker
 fake = Faker('en_CA')
 
@@ -44,8 +45,9 @@ def set_rows_count(count):
 def dump_to_csv(count):
     final_rows = '{}{}'.format(CSV_HEADER, set_rows_count(count))
     print(final_rows)
-    with open('C:\\Users\\dkhad\\Desktop\\generated_data.csv', 'w') as f:
+    dirpath = "{}\TEMP\generated_data.csv".format(os.getcwd())
+    with open(dirpath, 'w') as f:
         f.write(final_rows)
 
 if __name__ == "__main__":
-    dump_to_csv(12)
+    dump_to_csv(5)
