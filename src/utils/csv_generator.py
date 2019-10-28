@@ -1,5 +1,4 @@
 import random
-import sys
 from faker import Faker
 fake = Faker('en_CA')
 
@@ -20,7 +19,7 @@ POSTAL_CODES = ["G0S 2V0", "H2V 4J7", "T2T 3W6", "J2X 3S2", "K7P 2P9", "V2C 6A1"
                 "J5M 2S9", "G5Y 7W8", "J8P 8C3", "V3T 2T6", "S7M 0V9", "K1T 0C6", "J7G 3G3", "J0X 1H0", "L0M 1B2",
                 "V3S 9K9", "N0B 2R0", "C0B 1B0", "A2H 3M2", "G4R 1H9", "J6A 2V3", "B0S 1B0", "G9H 1L2", "S7L 1X7",
                 "E5J 2L2", "A2H 5W1", "M3K 1H5"]
-USER_INPUT = input("Enter count of rows: ")
+
 
 def phone_gen():
     phone = "1-{}-{}-{}".format(random.randint(100, 999), random.randint(100, 999), random.randint(1000, 9999))
@@ -34,19 +33,19 @@ def generate_data():
                 random.choice(TRADES), random.choice(TRADE_LVL))
     return result
 
-def set_rows_count():
+def set_rows_count(count):
     i = 0
     res = ''
-    while i < int(USER_INPUT):
+    while i < count:
         res += generate_data()
         i += 1
     return res
 
-def dump_to_csv():
-    final_rows = '{}{}'.format(CSV_HEADER, set_rows_count())
+def dump_to_csv(count):
+    final_rows = '{}{}'.format(CSV_HEADER, set_rows_count(count))
     print(final_rows)
     with open('C:\\Users\\dkhad\\Desktop\\generated_data.csv', 'w') as f:
         f.write(final_rows)
 
 if __name__ == "__main__":
-    dump_to_csv()
+    dump_to_csv(12)
