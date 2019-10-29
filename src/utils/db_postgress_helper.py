@@ -19,3 +19,4 @@ def postgress_conn(record):
 
 if __name__ == "__main__":
     print(postgress_conn(query))
+
