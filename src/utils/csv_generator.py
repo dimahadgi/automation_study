@@ -34,19 +34,12 @@ def generate_data():
                 random.choice(TRADES), random.choice(TRADE_LVL))
     return result
 
-def set_rows_count(count):
-    i = 0
-    res = ''
-    while i < count:
-        res += generate_data()
-        i += 1
-    return res
-
 def dump_to_csv(count):
-    final_rows = '{}{}'.format(CSV_HEADER, set_rows_count(count))
+    final_rows = '{}{}'.format(CSV_HEADER, ''.join(map(lambda x: generate_data(), [x for x in range(count)])))
     print(final_rows)
-    dirpath = "{}\TEMP\generated_data.csv".format(os.getcwd())
-    with open(dirpath, 'w') as f:
+    current_dir = os.path.dirname(__file__)
+    file_path = os.path.join(current_dir, '..', 'tmp', "csv_generator.csv")
+    with open(file_path, 'w') as f:
         f.write(final_rows)
 
 if __name__ == "__main__":
