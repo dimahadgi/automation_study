@@ -43,4 +43,4 @@ def dump_to_csv(count):
         f.write(final_rows)
 
 if __name__ == "__main__":
-    dump_to_csv(5)
+    dump_to_csv(int(input('set rows count')))
