@@ -4,11 +4,11 @@ query = "select email from worker;"
 
 def postgress_conn(record):
     try:
-        connection = psycopg2.connect(user="qcmaster",
-                                      password="roo7IaquieTiem",
-                                      host="worker-search-qc.cbqlnvvoalu1.eu-central-1.rds.amazonaws.com",
-                                      port="5432",
-                                      database="qc2_employer")
+        connection = psycopg2.connect(user="***",
+                                      password="**",
+                                      host="**",
+                                      port="**",
+                                      database="**")
         cursor = connection.cursor()
         cursor.execute(record)
         record = cursor.fetchall()
