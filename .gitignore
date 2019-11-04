@@ -8,3 +8,5 @@ mongo_db/
 *.cfg
 *.csv
 __pycache__/
+/db_conf.ini
+/for_testing.py

@@ -29,9 +29,19 @@ def phone_gen():
 
 def generate_data():
     result = '{},{},{},{},{},{},{},{},{},{},{},{}\n'\
-        .format(fake.email(), fake.first_name(), fake.last_name(), random.randint(1920, 2010), fake.country(), fake.city(),
-                random.choice(PROVINCE), random.choice(POSTAL_CODES), phone_gen(), random.randint(10000, 999999),
-                random.choice(TRADES), random.choice(TRADE_LVL))
+        .format(
+        fake.email(),
+        fake.first_name(),
+        fake.last_name(),
+        random.randint(1920, 2010),
+        fake.country(),
+        fake.city(),
+        random.choice(PROVINCE),
+        random.choice(POSTAL_CODES),
+        phone_gen(),
+        random.randint(10000, 999999),
+        random.choice(TRADES),
+        random.choice(TRADE_LVL))
     return result
 
 def dump_to_csv(count):
