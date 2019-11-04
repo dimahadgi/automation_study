@@ -1,6 +1,6 @@
-from src.utils.db_postgress_helper import Db_connect
+from src.utils.db_postgress_helper import DbConnect
 
 
-cursor = Db_connect.postgress_conn()
-test = Db_connect.fetch_all("select email from worker;", cursor)
-print(test)
+query = "select email from worker;"
+test = DbConnect()
+print(test.fetch_one(query))
