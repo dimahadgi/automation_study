@@ -26,3 +26,4 @@ class ApiHelper:
         response = requests.post(post_url, headers={
             'Authorization': 'bln type=session,version=1,token="{}"'.format(self.auth_token())}, json=body)
         return response.status_code
+
