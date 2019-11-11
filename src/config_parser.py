@@ -1,6 +1,7 @@
 import configparser
 import os
 
+
 class Config:
     config = configparser.ConfigParser()
     current_dir = os.path.dirname(__file__)
@@ -12,3 +13,12 @@ class Config:
     port = config.get('db_connection_settings', 'port')
     database = config.get('db_connection_settings', 'database')
 
+
+class ApiConf:
+    config = configparser.ConfigParser()
+    current_dir = os.path.dirname(__file__)
+    file_path = os.path.join(current_dir, '..', "api_conf.ini")
+    config.read(file_path)
+    login = config.get('api_connection_settings', 'login')
+    password = config.get('api_connection_settings', 'password')
+    auth_url = config.get('api_connection_settings', 'auth_url')

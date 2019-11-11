@@ -9,4 +9,4 @@ mongo_db/
 *.csv
 __pycache__/
 /db_conf.ini
-/for_testing.py
+/src/utils/certificates_generator.py
