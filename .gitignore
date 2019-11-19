@@ -8,5 +8,5 @@ mongo_db/
 *.cfg
 *.csv
 __pycache__/
-/db_conf.ini
 /src/utils/certificates_generator.py
+/runner.py

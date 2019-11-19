@@ -4,11 +4,11 @@ from src.config_parser import Config
 
 class DbConnect:
     def __init__(self):
-        self.user = Config.user
-        self.password = Config.password
-        self.host = Config.host
-        self.port = Config.port
-        self.database = Config.database
+        self.user = Config.db_user
+        self.password = Config.db_password
+        self.host = Config.db_host
+        self.port = Config.db_port
+        self.database = Config.db_database
         self.cursor = self.postgress_conn()
 
     def postgress_conn(self):

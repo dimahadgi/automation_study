@@ -1,12 +1,12 @@
 import requests
-from src.config_parser import ApiConf
+from src.config_parser import Config
 
 
 class ApiHelper:
     def __init__(self):
-        self.auth_url = ApiConf.auth_url
-        self.login = ApiConf.login
-        self.password = ApiConf.password
+        self.auth_url = Config.api_test_host + Config.api_test_auth_path
+        self.login = Config.api_test_login
+        self.password = Config.api_test_password
         self.auth_token = self.auth_get_token()
 
     def auth_get_token(self):
@@ -26,4 +26,3 @@ class ApiHelper:
         response = requests.post(post_url, headers={
             'Authorization': 'bln type=session,version=1,token="{}"'.format(self.auth_token())}, json=body)
         return response.status_code
-
