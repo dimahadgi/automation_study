@@ -41,12 +41,9 @@ class CertificatesGenerator:
     def add_certificates(self):
         for workers_id in self.get_worker_id():
             response = requests.post(self.url, headers=self.header, json=self.generate_payload(workers_id))
-            if response.status_code == 201:
-                print(datetime.datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S -"), 'Certificate successfully created')
-            else:
-                print(response.status_code)
+            return response.status_code
 
 
 if __name__ == "__main__":
-    c = CertificatesGenerator()
-    c.add_certificates()
+    cert_gen = CertificatesGenerator()
+    cert_gen.add_certificates()
