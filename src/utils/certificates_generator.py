@@ -1,4 +1,3 @@
-import datetime
 import os
 import requests
 import random
@@ -14,7 +13,7 @@ class CertificatesGenerator:
     def __init__(self):
         self.exp_date = "{}-11-05T16:01:38.440Z".format(random.randint(2017, 2030))
         self.image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
-        self.issued_date = "2017-11-05T16:01:38.433Z"
+        self.issued_date = "2016-11-05T16:01:38.433Z"
         self.url = os.path.join(Config.api_test_host, Config.api_test_post_path)
         self.fake = Faker('en_CA')
         api_helper = ApiHelper()
@@ -39,11 +38,19 @@ class CertificatesGenerator:
         return body
 
     def add_certificates(self):
+        certificates_id = []
         for workers_id in self.get_worker_id():
             response = requests.post(self.url, headers=self.header, json=self.generate_payload(workers_id))
-            return response.status_code
+            certificates_id.append(response.json().get('id'))
+            if response.status_code == 201:
+                pass
+            else:
+                print("Certificate is not created", response.status_code)
+                break
+        return certificates_id
 
 
 if __name__ == "__main__":
     cert_gen = CertificatesGenerator()
     cert_gen.add_certificates()
+
