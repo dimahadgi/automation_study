@@ -54,3 +54,4 @@ if __name__ == "__main__":
     cert_gen = CertificatesGenerator()
     cert_gen.add_certificates()
 
+

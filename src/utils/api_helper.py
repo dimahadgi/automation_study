@@ -27,3 +27,4 @@ class ApiHelper:
     def do_post_request(self, post_url, body):
         response = requests.post(post_url, headers=self.header, json=body)
         return response.status_code
+
