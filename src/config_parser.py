@@ -12,9 +12,10 @@ class Config:
     db_host = config.get('db_connection_settings', 'host')
     db_port = config.get('db_connection_settings', 'port')
     db_database = config.get('db_connection_settings', 'database')
+
     api_test_login = config.get('test', 'login1')
     api_test_password = config.get('test', 'password')
     api_test_host = config.get('test', 'host')
     api_test_auth_path = config.get('test', 'auth_path')
     api_test_post_path = config.get('test', 'post_path')
-    api_test_get_url = config.get('api_connection_settings', 'get_url')
+    api_test_get_workers_id_url = config.get('test', 'get_workers_id_url')
