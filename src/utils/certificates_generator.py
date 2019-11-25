@@ -11,11 +11,11 @@ from src.utils.db_postgress_helper import DbConnect
 
 class CertificatesGenerator:
     def __init__(self):
-        self.exp_date = "{}-11-05T16:01:38.440Z".format(random.randint(2017, 2030))
+        self.exp_date = "{}-11-05T16:01:38.440Z".format(random.randint(2017, 2023))
         self.image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
-        self.issued_date = "2018-11-05T16:01:38.433Z"
-        self.url = os.path.join(Config.api_test_host, Config.api_test_post_path)
-        self.get_id_url = os.path.join(Config.api_test_host, Config.api_test_get_workers_id_url)
+        self.issued_date = "2017-11-05T16:01:38.433Z"
+        self.url = os.path.join(Config.api_host, Config.create_certs_path)
+        self.get_id_url = os.path.join(Config.api_host, Config.api_get_workers_id_url)
         self.fake = Faker('en_CA')
         self.api_helper = ApiHelper()
         self.token = self.api_helper.auth_token
@@ -44,7 +44,7 @@ class CertificatesGenerator:
 
     def add_certificates(self):
         certificates_id = []
-        for workers_id in self.get_worker_id_from_db():
+        for workers_id in self.get_workers_id_from_api():
             response = requests.post(self.url, headers=self.header, json=self.generate_payload(workers_id))
             certificates_id.append(response.json().get('id'))
             if response.status_code == 201:
@@ -58,6 +58,3 @@ class CertificatesGenerator:
 if __name__ == "__main__":
     cert_gen = CertificatesGenerator()
     cert_gen.add_certificates()
-
-
-
