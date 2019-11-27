@@ -21,15 +21,14 @@ class CertificatesGenerator:
         self.token = self.api_helper.auth_token
         self.header = {'Authorization': 'bln type=session,version=1,token="{}"'.format(self.token)}
 
-    @staticmethod
-    def get_worker_id_from_db():
-        db_conn = DbConnect()
-        worker_id = db_conn.fetch_all('''select "id" from "worker" where "employerId"=201 and "archived"=false;''')
-        return [x[0] for x in worker_id]
-
-    def get_workers_id_from_api(self):
-        workers_list = self.api_helper.do_get_request(self.get_id_url).json()
-        return [d.get('id') for d in workers_list]
+    def get_workers_id(self):
+        if Config.env == "prod":
+            workers_list = self.api_helper.do_get_request(self.get_id_url).json()
+            return [d.get('id') for d in workers_list]
+        else:
+            db_conn = DbConnect()
+            worker_id = db_conn.fetch_all('''select "id" from "worker" where "employerId"=201 and "archived"=false;''')
+            return [x[0] for x in worker_id]
 
     def generate_payload(self, worker_id: int) -> dict:
         body = {'courseName': self.fake.company(),
@@ -44,7 +43,7 @@ class CertificatesGenerator:
 
     def add_certificates(self):
         certificates_id = []
-        for workers_id in self.get_workers_id_from_api():
+        for workers_id in self.get_workers_id():
             response = requests.post(self.url, headers=self.header, json=self.generate_payload(workers_id))
             certificates_id.append(response.json().get('id'))
             if response.status_code == 201:

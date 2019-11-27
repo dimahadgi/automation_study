@@ -8,6 +8,9 @@ class Config:
     file_path = os.path.join(current_dir, '..', "conf.ini")
     config.read(file_path)
 
+    # Environment
+    env = config.get('api_params', 'env')
+
     # Database parameters
     db_user = config.get('db_params', 'user')
     db_password = config.get('db_params', 'password')
