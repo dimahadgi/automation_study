@@ -9,6 +9,7 @@ mongo_db/
 *.csv
 __pycache__/
 /runner.py
+/csv_generator_runner.py
 conf.ini
 src/for_testing.py
 
