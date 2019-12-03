@@ -8,9 +8,6 @@ from src.config_parser import Config
 from src.utils.api_helper import ApiHelper
 from src.utils.db_postgress_helper import DbConnect
 
-fake = Faker('en_CA')
-C_NAMES = [fake.company() for x in range(0, 5)]
-
 
 def gen_date():
     expiration_date = "{}-{}-{}T15:15:10.440Z".format(
@@ -23,7 +20,7 @@ def gen_date():
 class CertificatesGenerator:
     def __init__(self):
         self.image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
-        self.issued_date = "2017-11-05T16:01:38.433Z"
+        self.issued_date = "2016-11-05T16:01:38.433Z"
         self.url = os.path.join(Config.api_host, Config.create_certs_path)
         self.get_id_url = os.path.join(Config.api_host, Config.api_get_workers_id_url)
         self.fake = Faker('en_CA')
@@ -37,10 +34,11 @@ class CertificatesGenerator:
             return [d.get('id') for d in workers_list]
         else:
             db_conn = DbConnect()
-            worker_id = db_conn.fetch_all('''select "id" from "worker" where "employerId"=202 and "archived"=false;''')
+            query = '''select "id" from "worker" where "employerId"={} and "archived"=false;'''.format(Config.db_login)
+            worker_id = db_conn.fetch_all(query)
             return [x[0] for x in worker_id]
 
-    def generate_payload(self, worker_id: int, course_names) -> dict:
+    def generate_payload(self, worker_id: int, course_names: str) -> dict:
         body = {'courseName': course_names,
                 'description': self.fake.catch_phrase(),
                 'expiration': gen_date(),
@@ -51,12 +49,12 @@ class CertificatesGenerator:
                 }
         return body
 
-    def add_certificates(self):
+    def add_certificates(self, course_names: list):
         certificates_id = []
         for worker_id in self.get_workers_id():
             response = requests.post(self.url,
                                      headers=self.header,
-                                     json=self.generate_payload(worker_id, random.choice(C_NAMES)))
+                                     json=self.generate_payload(worker_id, random.choice(course_names)))
             certificates_id.append(response.json().get('id'))
             if response.status_code == 201:
                 pass
@@ -67,7 +65,8 @@ class CertificatesGenerator:
 
 
 if __name__ == "__main__":
+    fake = Faker('en_CA')
     cert_gen = CertificatesGenerator()
-    cert_gen.add_certificates()
+    cert_gen.add_certificates([fake.company() for x in range(0, 5)])
 
 
