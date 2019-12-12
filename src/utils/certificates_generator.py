@@ -9,11 +9,18 @@ from src.utils.api_helper import ApiHelper
 from src.utils.db_postgress_helper import DbConnect
 
 
+def gen_date():
+    expiration_date = "{}-{}-{}T15:15:10.440Z".format(
+        random.randint(2017, 2023),
+        random.choice(["%.2d" % i for i in range(1, 12)]),
+        random.choice(["%.2d" % i for i in range(1, 25)]))
+    return expiration_date
+
+
 class CertificatesGenerator:
     def __init__(self):
-        self.exp_date = "{}-11-05T16:01:38.440Z".format(random.randint(2017, 2023))
         self.image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
-        self.issued_date = "2017-11-05T16:01:38.433Z"
+        self.issued_date = "2016-11-05T16:01:38.433Z"
         self.url = os.path.join(Config.api_host, Config.create_certs_path)
         self.get_id_url = os.path.join(Config.api_host, Config.api_get_workers_id_url)
         self.fake = Faker('en_CA')
@@ -21,20 +28,20 @@ class CertificatesGenerator:
         self.token = self.api_helper.auth_token
         self.header = {'Authorization': 'bln type=session,version=1,token="{}"'.format(self.token)}
 
-    @staticmethod
-    def get_worker_id_from_db():
-        db_conn = DbConnect()
-        worker_id = db_conn.fetch_all('''select "id" from "worker" where "employerId"=201 and "archived"=false;''')
-        return [x[0] for x in worker_id]
+    def get_workers_id(self):
+        if Config.env == "prod":
+            workers_list = self.api_helper.do_get_request(self.get_id_url).json()
+            return [d.get('id') for d in workers_list]
+        else:
+            db_conn = DbConnect()
+            query = '''select "id" from "worker" where "employerId"={} and "archived"=false;'''.format(Config.db_login)
+            worker_id = db_conn.fetch_all(query)
+            return [x[0] for x in worker_id]
 
-    def get_workers_id_from_api(self):
-        workers_list = self.api_helper.do_get_request(self.get_id_url).json()
-        return [d.get('id') for d in workers_list]
-
-    def generate_payload(self, worker_id: int) -> dict:
-        body = {'courseName': self.fake.company(),
+    def generate_payload(self, worker_id: int, course_names: str) -> dict:
+        body = {'courseName': course_names,
                 'description': self.fake.catch_phrase(),
-                'expiration': self.exp_date,
+                'expiration': gen_date(),
                 'file': self.image_file,
                 'issued': self.issued_date,
                 'trainingProvider': self.fake.company(),
@@ -42,10 +49,12 @@ class CertificatesGenerator:
                 }
         return body
 
-    def add_certificates(self):
+    def add_certificates(self, course_names: list):
         certificates_id = []
-        for workers_id in self.get_workers_id_from_api():
-            response = requests.post(self.url, headers=self.header, json=self.generate_payload(workers_id))
+        for worker_id in self.get_workers_id():
+            response = requests.post(self.url,
+                                     headers=self.header,
+                                     json=self.generate_payload(worker_id, random.choice(course_names)))
             certificates_id.append(response.json().get('id'))
             if response.status_code == 201:
                 pass
@@ -56,5 +65,8 @@ class CertificatesGenerator:
 
 
 if __name__ == "__main__":
+    fake = Faker('en_CA')
     cert_gen = CertificatesGenerator()
-    cert_gen.add_certificates()
+    cert_gen.add_certificates([fake.company() for x in range(0, 5)])
+
+
