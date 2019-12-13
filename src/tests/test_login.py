@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 import unittest
+import time
 
+from faker import Faker
 from selenium import webdriver
+
+from src.utils.db_postgress_helper import DbConnect
 from src.pages.login_page import LoginPage
 from src.pages.main_page import MainPage
-import time
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -28,9 +31,12 @@ class LoginTestSuite(unittest.TestCase):
     #     login_page.press_login()
 
     def test_add_new_worker(self):
-        email = "test@email.com"
-        first_name = "Jack"
-        last_name = "Daniels"
+        fake = Faker()
+        db_conn = DbConnect()
+        email = fake.email()
+        first_name = fake.first_name()
+        last_name = fake.last_name()
+        sql_query = """select "email" from "worker" where email='{}';""".format(email)
         login_page = LoginPage(self.driver)
         login_page.specify_email(self.email)
         login_page.specify_pass(self.password)
@@ -42,6 +48,10 @@ class LoginTestSuite(unittest.TestCase):
         main_page.enter_first_name(first_name)
         main_page.enter_last_name(last_name)
         main_page.press_create_button()
+        time.sleep(5)
+        query_response = db_conn.fetch_one(sql_query)
+        self.assertIsNotNone(query_response)
+
 
 
 
