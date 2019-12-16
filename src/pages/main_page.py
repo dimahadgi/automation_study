@@ -50,4 +50,9 @@ class MainPage(BasePage):
         )
         press_create.click()
 
+    def wait_for_confirm_message(self):
+        check_element = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.CONFIRMATION_MESSAGE)
+        )
+
 

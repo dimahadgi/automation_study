@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import unittest
-import time
 
 from faker import Faker
 from selenium import webdriver
@@ -24,11 +23,11 @@ class LoginTestSuite(unittest.TestCase):
     def tearDown(self) -> None:
         self.driver.quit()
 
-    # def test_login(self):
-    #     login_page = LoginPage(self.driver)
-    #     login_page.specify_email(self.email)
-    #     login_page.specify_pass(self.password)
-    #     login_page.press_login()
+    def test_login(self):
+        login_page = LoginPage(self.driver)
+        login_page.specify_email(self.email)
+        login_page.specify_pass(self.password)
+        login_page.press_login()
 
     def test_add_new_worker(self):
         fake = Faker()
@@ -48,10 +47,6 @@ class LoginTestSuite(unittest.TestCase):
         main_page.enter_first_name(first_name)
         main_page.enter_last_name(last_name)
         main_page.press_create_button()
-        time.sleep(5)
+        main_page.wait_for_confirm_message()
         query_response = db_conn.fetch_one(sql_query)
         self.assertIsNotNone(query_response)
-
-
-
-

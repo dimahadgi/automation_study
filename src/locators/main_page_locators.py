@@ -32,4 +32,5 @@ SEARCH_EMAILS_BUTTON = (By.XPATH, '//button/span[text()="Search"]')
 FIRST_NAME_FIELD = (By.CSS_SELECTOR, 'form #firstname')
 LAST_NAME_FIELD = (By.CSS_SELECTOR, 'form #lastname')
 CREATE_WORKER_BUTTON = (By.XPATH, '//button/span[text()="Create"]')
+CONFIRMATION_MESSAGE = (By.XPATH, '//span[contains(text(),"created")]')
 
