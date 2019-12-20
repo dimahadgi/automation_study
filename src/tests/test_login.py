@@ -3,6 +3,7 @@ import unittest
 import os
 
 from selenium import webdriver
+from faker import Faker
 
 from src.utils.db_postgress_helper import DbConnect
 from src.pages.login_page import LoginPage
@@ -12,36 +13,51 @@ from src.config_parser import Config
 
 
 class LoginTestSuite(unittest.TestCase):
-    URL = 'https://acme.qc2.blnsearch.net/employer-client/certificates'
-
     def setUp(self):
+        self.url = Config.login_url
         self.driver = webdriver.Chrome()
         self.driver.set_window_position(0, 0)
         self.driver.set_window_size(1700, 1000)
-        self.driver.get(self.URL)
+        self.driver.get(self.url)
         self.email = Config.api_login
         self.password = Config.api_password
 
     def tearDown(self) -> None:
         self.driver.quit()
 
-    def test_login(self):
+    def login(self):
         login_page = LoginPage(self.driver)
         login_page.specify_email(self.email)
         login_page.specify_pass(self.password)
         login_page.press_login()
 
+    @staticmethod
+    def generate_fake_data():
+        fake = Faker()
+        fake_data = {
+            "email": fake.email(),
+            "first_name": fake.first_name(),
+            "last_name": fake.last_name(),
+            "cert_name": fake.company()
+        }
+        return fake_data
+
+    def test_login(self):
+        main_page = MainPage(self.driver)
+        LoginTestSuite.login(self)
+        self.assertTrue(main_page.wait_main_page())
+
     def test_add_new_worker(self):
         main_page = MainPage(self.driver)
         db_conn = DbConnect()
-        email = main_page.generate_fake_data()["email"]
+        email = LoginTestSuite.generate_fake_data()["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(email)
-        LoginTestSuite.test_login(self)
+        LoginTestSuite.login(self)
         main_page.press_add_new_worker()
         main_page.enter_email_address(email)
         main_page.press_search_emails()
-        main_page.enter_first_name(main_page.generate_fake_data()["first_name"])
-        main_page.enter_last_name(main_page.generate_fake_data()["last_name"])
+        main_page.enter_first_name(LoginTestSuite.generate_fake_data()["first_name"])
+        main_page.enter_last_name(LoginTestSuite.generate_fake_data()["last_name"])
         main_page.press_create_button()
         self.assertTrue(main_page.wait_for_confirm_message())
         query_response = db_conn.fetch_one(sql_query)
@@ -51,22 +67,22 @@ class LoginTestSuite(unittest.TestCase):
         db_conn = DbConnect()
         api_helper = ApiHelper()
         main_page = MainPage(self.driver)
-        fake_email = main_page.generate_fake_data()["email"]
-        new_email = main_page.generate_fake_data()["email"]
+        fake_email = LoginTestSuite.generate_fake_data()["email"]
+        new_email = LoginTestSuite.generate_fake_data()["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(new_email)
         body = {'email': fake_email,
-                'firstname': main_page.generate_fake_data()["first_name"],
-                'lastname': main_page.generate_fake_data()["last_name"]
+                'firstname': LoginTestSuite.generate_fake_data()["first_name"],
+                'lastname': LoginTestSuite.generate_fake_data()["last_name"]
                 }
         api_helper.do_post_request(body)
-        LoginTestSuite.test_login(self)
+        LoginTestSuite.login(self)
         main_page.specify_search(fake_email)
         main_page.press_search_button()
         main_page.click_on_worker_name_in_grid()
         main_page.click_on_edit_profile()
         main_page.fill_fields_on_edit_pers_data(new_email,
-                                                main_page.generate_fake_data()["first_name"],
-                                                main_page.generate_fake_data()["last_name"])
+                                                LoginTestSuite.generate_fake_data()["first_name"],
+                                                LoginTestSuite.generate_fake_data()["last_name"])
         main_page.click_done_button()
         main_page.click_done_button()
         query_response = db_conn.fetch_one(sql_query)
@@ -76,14 +92,14 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        email = main_page.generate_fake_data()["email"]
+        email = LoginTestSuite.generate_fake_data()["email"]
         sql_query = """select "email" from worker where email='{}' and archived='true';""".format(email)
         body = {'email': email,
-                'firstname': main_page.generate_fake_data()["first_name"],
-                'lastname': main_page.generate_fake_data()["last_name"]
+                'firstname': LoginTestSuite.generate_fake_data()["first_name"],
+                'lastname': LoginTestSuite.generate_fake_data()["last_name"]
                 }
         api_helper.do_post_request(body)
-        LoginTestSuite.test_login(self)
+        LoginTestSuite.login(self)
         main_page.specify_search(email)
         main_page.press_search_button()
         main_page.click_on_checkbox_next_to_worker()
@@ -96,27 +112,28 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        email = main_page.generate_fake_data()["email"]
-        cert_name = main_page.generate_fake_data()["cert_name"]
+        image_path = os.path.join(os.path.abspath('..'), 'tmp', 'test.png')
+        email = LoginTestSuite.generate_fake_data()["email"]
+        cert_name = LoginTestSuite.generate_fake_data()["cert_name"]
         body = {'email': email,
-                'firstname': main_page.generate_fake_data()["first_name"],
-                'lastname': main_page.generate_fake_data()["last_name"]
+                'firstname': LoginTestSuite.generate_fake_data()["first_name"],
+                'lastname': LoginTestSuite.generate_fake_data()["last_name"]
                 }
         sql_query = '''select "courseName" from "certificate" 
                 where "workerId"=(select "id" from worker where email='{}') 
                 and "courseName"='{}';'''.format(email, cert_name)
         api_helper.do_post_request(body)
-        LoginTestSuite.test_login(self)
+        LoginTestSuite.login(self)
         main_page.specify_search(email)
         main_page.press_search_button()
         main_page.click_on_worker_name_in_grid()
         main_page.click_add_new_record()
-        main_page.send_file_to_upload_input(os.path.join(os.path.abspath('..'), 'tmp', 'test.png'))
+        main_page.send_file_to_upload_input(image_path)
         main_page.select_from_drop_down()
         main_page.fill_data_for_certificate(cert_name,
-                                            main_page.generate_fake_data()["cert_name"],
+                                            LoginTestSuite.generate_fake_data()["cert_name"],
                                             "2016-12-10",
                                             "2019-12-12",
-                                            main_page.generate_fake_data()["cert_name"])
+                                            LoginTestSuite.generate_fake_data()["cert_name"])
         query_response = db_conn.fetch_one(sql_query)
         self.assertIsNotNone(query_response)

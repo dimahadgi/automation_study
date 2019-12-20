@@ -1,6 +1,5 @@
 import time
 
-from faker import Faker
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
@@ -11,16 +10,13 @@ from src.locators import main_page_locators as locators
 
 
 class MainPage(BasePage):
-    @staticmethod
-    def generate_fake_data():
-        fake = Faker()
-        fake_data = {
-            "email": fake.email(),
-            "first_name": fake.first_name(),
-            "last_name": fake.last_name(),
-            "cert_name": fake.company()
-        }
-        return fake_data
+    def wait_main_page(self):
+        try:
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.CERTIFICATES_TAB))
+            return True
+        except NoSuchElementException:
+            return False
 
     def press_add_new_worker(self):
         add_new_worker = WebDriverWait(self.driver, self.timeout).until(

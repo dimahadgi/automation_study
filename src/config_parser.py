@@ -8,6 +8,9 @@ class Config:
     file_path = os.path.join(current_dir, '..', "conf.ini")
     config.read(file_path)
 
+    # login_url
+    login_url = config.get('login_params', 'url')
+
     # Environment
     env = config.get('api_params', 'env')
 
