@@ -1,13 +1,27 @@
+import time
+
+from faker import Faker
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
+
 from src.pages.base_page import BasePage
 from src.locators import main_page_locators as locators
-import time
 
 
 class MainPage(BasePage):
+    @staticmethod
+    def generate_fake_data():
+        fake = Faker()
+        fake_data = {
+            "email": fake.email(),
+            "first_name": fake.first_name(),
+            "last_name": fake.last_name(),
+            "cert_name": fake.company()
+        }
+        return fake_data
+
     def press_add_new_worker(self):
         add_new_worker = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.ADD_NEW_WORKER))
@@ -57,10 +71,20 @@ class MainPage(BasePage):
         edit_profile_control.click()
 
     def specify_search(self, text):
-        WebDriverWait(self.driver, self.timeout).until(EC.element_to_be_clickable(locators.FILTERS_SECTION))
-        search_field = WebDriverWait(self.driver, self.timeout).until(
-            EC.element_to_be_clickable(locators.SEARCH))
-        search_field.send_keys(text)
+        def wait_for_search():
+            search_field = WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.SEARCH))
+            search_field.send_keys(text)
+        try:
+            wait_for_search()
+        except:
+            time.sleep(1)
+            wait_for_search()
+
+    def press_search_button(self):
+        submit_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SUBMIT_BUTTON))
+        submit_button.click()
 
     def fill_fields_on_edit_pers_data(self, new_email, new_first_name, new_last_name):
         first_name = WebDriverWait(self.driver, self.timeout).until(
