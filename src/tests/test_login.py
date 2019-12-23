@@ -41,7 +41,7 @@ class LoginTestSuite(unittest.TestCase):
         db_conn = DbConnect()
         email = generate_fake_data()["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(email)
-        LoginTestSuite.login(self)
+        self.login()
         main_page.press_add_new_worker()
         main_page.enter_email_address(email)
         main_page.press_search_emails()
@@ -64,7 +64,7 @@ class LoginTestSuite(unittest.TestCase):
                 'lastname': generate_fake_data()["last_name"]
                 }
         api_helper.do_post_request(body)
-        LoginTestSuite.login(self)
+        self.login()
         main_page.specify_search(fake_email)
         main_page.press_search_button()
         main_page.click_on_worker_name_in_grid()
@@ -88,7 +88,7 @@ class LoginTestSuite(unittest.TestCase):
                 'lastname': generate_fake_data()["last_name"]
                 }
         api_helper.do_post_request(body)
-        LoginTestSuite.login(self)
+        self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
         main_page.click_on_checkbox_next_to_worker()
@@ -112,7 +112,7 @@ class LoginTestSuite(unittest.TestCase):
                 where "workerId"=(select "id" from worker where email='{}') 
                 and "courseName"='{}';'''.format(email, cert_name)
         api_helper.do_post_request(body)
-        LoginTestSuite.login(self)
+        self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
         main_page.click_on_worker_name_in_grid()
@@ -126,3 +126,10 @@ class LoginTestSuite(unittest.TestCase):
                                             generate_fake_data()["cert_name"])
         query_response = db_conn.fetch_one(sql_query)
         self.assertIsNotNone(query_response)
+
+
+
+
+
+
+
