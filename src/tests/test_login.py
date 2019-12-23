@@ -3,13 +3,13 @@ import unittest
 import os
 
 from selenium import webdriver
-from faker import Faker
 
 from src.utils.db_postgress_helper import DbConnect
 from src.pages.login_page import LoginPage
 from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
+from src.utils.data_generator import generate_fake_data
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -31,33 +31,22 @@ class LoginTestSuite(unittest.TestCase):
         login_page.specify_pass(self.password)
         login_page.press_login()
 
-    @staticmethod
-    def generate_fake_data():
-        fake = Faker()
-        fake_data = {
-            "email": fake.email(),
-            "first_name": fake.first_name(),
-            "last_name": fake.last_name(),
-            "cert_name": fake.company()
-        }
-        return fake_data
-
     def test_login(self):
         main_page = MainPage(self.driver)
-        LoginTestSuite.login(self)
+        self.login()
         self.assertTrue(main_page.wait_main_page())
 
     def test_add_new_worker(self):
         main_page = MainPage(self.driver)
         db_conn = DbConnect()
-        email = LoginTestSuite.generate_fake_data()["email"]
+        email = generate_fake_data()["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(email)
         LoginTestSuite.login(self)
         main_page.press_add_new_worker()
         main_page.enter_email_address(email)
         main_page.press_search_emails()
-        main_page.enter_first_name(LoginTestSuite.generate_fake_data()["first_name"])
-        main_page.enter_last_name(LoginTestSuite.generate_fake_data()["last_name"])
+        main_page.enter_first_name(generate_fake_data()["first_name"])
+        main_page.enter_last_name(generate_fake_data()["last_name"])
         main_page.press_create_button()
         self.assertTrue(main_page.wait_for_confirm_message())
         query_response = db_conn.fetch_one(sql_query)
@@ -67,12 +56,12 @@ class LoginTestSuite(unittest.TestCase):
         db_conn = DbConnect()
         api_helper = ApiHelper()
         main_page = MainPage(self.driver)
-        fake_email = LoginTestSuite.generate_fake_data()["email"]
-        new_email = LoginTestSuite.generate_fake_data()["email"]
+        fake_email = generate_fake_data()["email"]
+        new_email = generate_fake_data()["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(new_email)
         body = {'email': fake_email,
-                'firstname': LoginTestSuite.generate_fake_data()["first_name"],
-                'lastname': LoginTestSuite.generate_fake_data()["last_name"]
+                'firstname': generate_fake_data()["first_name"],
+                'lastname': generate_fake_data()["last_name"]
                 }
         api_helper.do_post_request(body)
         LoginTestSuite.login(self)
@@ -81,8 +70,8 @@ class LoginTestSuite(unittest.TestCase):
         main_page.click_on_worker_name_in_grid()
         main_page.click_on_edit_profile()
         main_page.fill_fields_on_edit_pers_data(new_email,
-                                                LoginTestSuite.generate_fake_data()["first_name"],
-                                                LoginTestSuite.generate_fake_data()["last_name"])
+                                                generate_fake_data()["first_name"],
+                                                generate_fake_data()["last_name"])
         main_page.click_done_button()
         main_page.click_done_button()
         query_response = db_conn.fetch_one(sql_query)
@@ -92,11 +81,11 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        email = LoginTestSuite.generate_fake_data()["email"]
+        email = generate_fake_data()["email"]
         sql_query = """select "email" from worker where email='{}' and archived='true';""".format(email)
         body = {'email': email,
-                'firstname': LoginTestSuite.generate_fake_data()["first_name"],
-                'lastname': LoginTestSuite.generate_fake_data()["last_name"]
+                'firstname': generate_fake_data()["first_name"],
+                'lastname': generate_fake_data()["last_name"]
                 }
         api_helper.do_post_request(body)
         LoginTestSuite.login(self)
@@ -113,11 +102,11 @@ class LoginTestSuite(unittest.TestCase):
         api_helper = ApiHelper()
         db_conn = DbConnect()
         image_path = os.path.join(os.path.abspath('..'), 'tmp', 'test.png')
-        email = LoginTestSuite.generate_fake_data()["email"]
-        cert_name = LoginTestSuite.generate_fake_data()["cert_name"]
+        email = generate_fake_data()["email"]
+        cert_name = generate_fake_data()["cert_name"]
         body = {'email': email,
-                'firstname': LoginTestSuite.generate_fake_data()["first_name"],
-                'lastname': LoginTestSuite.generate_fake_data()["last_name"]
+                'firstname': generate_fake_data()["first_name"],
+                'lastname': generate_fake_data()["last_name"]
                 }
         sql_query = '''select "courseName" from "certificate" 
                 where "workerId"=(select "id" from worker where email='{}') 
@@ -131,9 +120,9 @@ class LoginTestSuite(unittest.TestCase):
         main_page.send_file_to_upload_input(image_path)
         main_page.select_from_drop_down()
         main_page.fill_data_for_certificate(cert_name,
-                                            LoginTestSuite.generate_fake_data()["cert_name"],
+                                            generate_fake_data()["cert_name"],
                                             "2016-12-10",
                                             "2019-12-12",
-                                            LoginTestSuite.generate_fake_data()["cert_name"])
+                                            generate_fake_data()["cert_name"])
         query_response = db_conn.fetch_one(sql_query)
         self.assertIsNotNone(query_response)
