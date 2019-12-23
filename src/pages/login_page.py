@@ -27,3 +27,4 @@ class LoginPage(BasePage):
             EC.element_to_be_clickable(locators.LOGIN)
         )
         login_button.click()
+

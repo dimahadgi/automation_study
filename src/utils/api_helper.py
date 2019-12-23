@@ -12,6 +12,7 @@ class ApiHelper:
         self.password = Config.api_password
         self.auth_token = self.auth_get_token()
         self.header = {'Authorization': 'bln type=session,version=1,token="{}"'.format(self.auth_token)}
+        self.post_url = os.path.join(Config.api_host, Config.api_get_workers_id_url)
 
     def auth_get_token(self):
         response = requests.post(self.auth_url,
@@ -25,8 +26,8 @@ class ApiHelper:
         response = requests.get(get_url, headers=self.header)
         return response
 
-    def do_post_request(self, post_url, body):
-        response = requests.post(post_url, headers=self.header, json=body)
+    def do_post_request(self, body):
+        response = requests.post(self.post_url, headers=self.header, json=body)
         return response
 
 
