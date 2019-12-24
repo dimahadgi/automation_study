@@ -1,3 +1,6 @@
+import random
+
+
 from faker import Faker
 
 fake = Faker()
@@ -15,3 +18,12 @@ def generate_fake_data():
         "random_phrase": fake.catch_phrase()
     }
     return fake_data
+
+
+def gen_date():
+    expiration_date = "{}-{}-{}T15:15:10.440Z".format(
+        random.randint(2017, 2023),
+        random.choice(["%.2d" % i for i in range(1, 12)]),
+        random.choice(["%.2d" % i for i in range(1, 25)]))
+    return expiration_date
+

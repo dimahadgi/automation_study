@@ -124,26 +124,84 @@ class MainPage(BasePage):
         # fill certificate name
         certificate_title = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.CERTIFICATE_TITLE))
+        certificate_title.send_keys(Keys.DELETE)
         certificate_title.send_keys(cert_name + Keys.ENTER)
         # fill training record name
         training_provider = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.TRAINING_PROVIDER_NAME))
+        training_provider.send_keys(Keys.CONTROL + "a")
+        training_provider.send_keys(Keys.DELETE)
         training_provider.send_keys(tr_name)
         # set date
         issued_date = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.ISSUED_DATE))
+        issued_date.send_keys(Keys.CONTROL + "a")
+        issued_date.send_keys(Keys.DELETE)
         issued_date.send_keys(iss_date)
         expiry_date = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.EXPIRY_DATE))
+        expiry_date.send_keys(Keys.CONTROL + "a")
+        expiry_date.send_keys(Keys.DELETE)
         expiry_date.send_keys(exp_date)
         # make Finish button active by filling Additional Certificate Detail field
         add_field = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.ADDITIONAL_DETAILS_FIELD))
+        add_field.send_keys(Keys.CONTROL + "a")
+        add_field.send_keys(Keys.DELETE)
         add_field.send_keys(add_detail)
         # click Finish on Edit Training Records modal window
         finish_button = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.FINISH_BUTTON))
-        finish_button.click()
+        try:
+            finish_button.click()
+        except NoSuchElementException:
+            done_button = WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.DONE_BUTTON_IN_EDIT_CERTIFICATES))
+            done_button.click()
+        WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.WAIT_FOR_CONF_MESSAGE))
+
+    def type_certificate_name(self, cert_name):
+        certificate_title = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.CERTIFICATE_TITLE))
+        certificate_title.send_keys(Keys.DELETE)
+        certificate_title.send_keys(cert_name + Keys.ENTER)
+
+    def type_tr_provider_name(self, tr_name):
+        training_provider = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.TRAINING_PROVIDER_NAME))
+        training_provider.send_keys(Keys.CONTROL + "a")
+        training_provider.send_keys(Keys.DELETE)
+        training_provider.send_keys(tr_name)
+
+    def type_dates(self, iss_date, exp_date):
+        issued_date = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.ISSUED_DATE))
+        issued_date.send_keys(Keys.CONTROL + "a")
+        issued_date.send_keys(Keys.DELETE)
+        issued_date.send_keys(iss_date)
+        expiry_date = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.EXPIRY_DATE))
+        expiry_date.send_keys(Keys.CONTROL + "a")
+        expiry_date.send_keys(Keys.DELETE)
+        expiry_date.send_keys(exp_date)
+
+    def type_additional_info(self, add_detail):
+        add_field = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.ADDITIONAL_DETAILS_FIELD))
+        add_field.send_keys(Keys.CONTROL + "a")
+        add_field.send_keys(Keys.DELETE)
+        add_field.send_keys(add_detail)
+
+    def press_submit_button(self):
+        finish_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.FINISH_BUTTON))
+        try:
+            finish_button.click()
+        except NoSuchElementException:
+            done_button = WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.DONE_BUTTON_IN_EDIT_CERTIFICATES))
+            done_button.click()
         WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.WAIT_FOR_CONF_MESSAGE))
 
@@ -164,6 +222,11 @@ class MainPage(BasePage):
         archive_button.click()
         WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.CONFIRMATION_MESSAGE_FOR_ARCH_WORKER))
+
+    def click_edit_certificates_control(self):
+        edit_certificates_control = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.EDIT_CERTIFICATES_CONTROL))
+        edit_certificates_control.click()
 
 
 

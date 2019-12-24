@@ -22,7 +22,6 @@ class CertificatesGenerator:
         self.image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
         self.issued_date = "2016-11-05T16:01:38.433Z"
         self.url = os.path.join(Config.api_host, Config.create_certs_path)
-        self.get_id_url = os.path.join(Config.api_host, Config.api_get_workers_id_url)
         self.fake = Faker('en_CA')
         self.api_helper = ApiHelper()
         self.token = self.api_helper.auth_token
@@ -30,7 +29,7 @@ class CertificatesGenerator:
 
     def get_workers_id(self):
         if Config.env == "prod":
-            workers_list = self.api_helper.do_get_request(self.get_id_url).json()
+            workers_list = self.api_helper.do_get_request("workers_creation").json()
             return [d.get('id') for d in workers_list]
         else:
             db_conn = DbConnect()
