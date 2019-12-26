@@ -11,7 +11,6 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
-from src.utils.data_generator import gen_date
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -128,11 +127,6 @@ class LoginTestSuite(unittest.TestCase):
         main_page.click_add_new_record()
         main_page.send_file_to_upload_input(image_path)
         main_page.select_from_drop_down()
-        # main_page.fill_data_for_certificate(cert_name,
-        #                                     fake_data["cert_name"],
-        #                                     "2016-12-10",
-        #                                     "2019-12-12",
-        #                                     fake_data2["cert_name"])
         main_page.type_certificate_name(cert_name)
         main_page.type_tr_provider_name(fake_data2["cert_name"])
         main_page.type_dates("2016-12-10", "2019-12-12")
