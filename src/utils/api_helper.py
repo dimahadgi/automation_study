@@ -5,6 +5,11 @@ from src.config_parser import Config
 
 
 class ApiHelper:
+    API_ROUTES = {
+        'certificates_creation': Config.create_certs_path,
+        'workers_creation': Config.api_get_workers_id_url
+    }
+
     def __init__(self):
         self.auth_url = os.path.join(Config.api_host, Config.api_auth_path)
         self.organization_key = Config.api_organization_key
@@ -12,7 +17,7 @@ class ApiHelper:
         self.password = Config.api_password
         self.auth_token = self.auth_get_token()
         self.header = {'Authorization': 'bln type=session,version=1,token="{}"'.format(self.auth_token)}
-        self.post_url = os.path.join(Config.api_host, Config.api_get_workers_id_url)
+        self.url = Config.api_host
 
     def auth_get_token(self):
         response = requests.post(self.auth_url,
@@ -22,12 +27,12 @@ class ApiHelper:
                                        'password': self.password})
         return response.json().get('token')
 
-    def do_get_request(self, get_url):
-        response = requests.get(get_url, headers=self.header)
+    def do_get_request(self, url_part):
+        response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header)
         return response
 
-    def do_post_request(self, body):
-        response = requests.post(self.post_url, headers=self.header, json=body)
+    def do_post_request(self, url_part, body):
+        response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header, json=body)
         return response
 
 

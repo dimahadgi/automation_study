@@ -44,13 +44,15 @@ ADD_NEW_RECORD = (By.XPATH, '//button/span[text()="Add training records"]')
 INPUT_FOR_UPLOAD_BUTTON = (By.CSS_SELECTOR, '''div[role="dialog"] input[type="file"]''')
 SELECT_DROP_DOWN = (By.XPATH, '//div[text()="select..."]')
 FIRST_ITEM_IN_DROP_DOWN = (By.XPATH, '//ul[@role="listbox"]//li[text()="1"]')
-CERTIFICATE_TITLE = (By.CSS_SELECTOR, '#certificateTitle1')
-TRAINING_PROVIDER_NAME = (By.CSS_SELECTOR, '#trainingProviderName1')
-ISSUED_DATE = (By.CSS_SELECTOR, '#certificateIssueDate1')
-EXPIRY_DATE = (By.CSS_SELECTOR, '#certificateExpiryDate1')
+CERTIFICATE_TITLE = (By.CSS_SELECTOR, "input[id^='certificateTitle']")
+TRAINING_PROVIDER_NAME = (By.CSS_SELECTOR, "input[id^='trainingProviderName']")
+ISSUED_DATE = (By.CSS_SELECTOR, "input[id^='certificateIssueDate']")
+EXPIRY_DATE = (By.CSS_SELECTOR, "input[id^='certificateExpiryDate']")
 FINISH_BUTTON = (By.XPATH, '//button/span[text()="Finish"]')
-ADDITIONAL_DETAILS_FIELD = (By.CSS_SELECTOR, '#additionalCertificateDetails1')
+DONE_BUTTON_IN_EDIT_CERTIFICATES = (By.XPATH, '//button/span[text()="Done"]')
+ADDITIONAL_DETAILS_FIELD = (By.CSS_SELECTOR, "input[id^='additionalCertificateDetails']")
 WAIT_FOR_CONF_MESSAGE = (By.XPATH, '//p[contains(text(),"added for")]')
+WAIT_FOR_CONF_MESSAGE_ON_EDIT = (By.XPATH, '//p[contains(text(),"successfully saved")]')
 
 # archive worker
 CHECKBOXES_NEXT_TO_WORKERS_IN_GRID = (By.CSS_SELECTOR, '.ag-pinned-left-cols-container div span')
@@ -58,5 +60,6 @@ ARCHIVE_BUTTON = (By.XPATH, '//button/span[text()="Archive"]')
 ARCHIVE_BUTTON_IN_DIALOG = (By.XPATH, '''//div[@role='dialog']//button/span[text()="Archive"]''')
 CONFIRMATION_MESSAGE_FOR_ARCH_WORKER = (By.XPATH, '''//div[@role='dialog']//p[contains(text(), "archived")]''')
 
-
+# edit certificates
+EDIT_CERTIFICATES_CONTROL = (By.CSS_SELECTOR, 'button[aria-label="Edit certificate"]')
 
