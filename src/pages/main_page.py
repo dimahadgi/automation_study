@@ -186,6 +186,59 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.EDIT_CERTIFICATES_CONTROL))
         edit_certificates_control.click()
 
+    def click_save_team_button(self):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SAVE_TEAM))
+        save_team.click()
+
+    def type_team_name_while_saving(self, team_name):
+        save_team_name_field = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SAVE_TEAM_NAME_FIELD))
+        save_team_name_field.send_keys(team_name + Keys.ENTER)
+
+    def click_save_button_while_saving_team(self):
+        save_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SAVE_BUTTON))
+        save_button.click()
+
+    def open_project_teams_filter(self):
+        project_teams = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.PROJECT_TEAMS))
+        project_teams.click()
+
+    def mark_checkbox_in_modals(self, index=0):
+        checkbox = self.driver.find_elements(*locators.PROJECT_TEAMS_CHECKBOXES)
+        checkbox[index].click()
+
+    def click_apply_button_in_modals(self):
+        apply_button = self.driver.find_element(*locators.APPLY_BUTTON)
+        apply_button.click()
+
+    def verify_chips_is_present(self):
+        try:
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.UI_CHIPS))
+            return True
+        except NoSuchElementException:
+            return False
+
+    def select_all_workers_in_the_grid(self):
+        select_all_checkbox = self.driver.find_element(*locators.SELECT_ALL_WORKERS)
+        select_all_checkbox.click()
+
+    def verify_text_of_counting_worker(self):
+        try:
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.COUNT_OF_SELECTED_WORKERS_IN_THE_GRID))
+            return True
+        except NoSuchElementException:
+            return False
+
+
+
+
+
+
 
 
 

@@ -12,7 +12,7 @@ ADD_NEW_WORKER = (By.XPATH, '//button/span[text()="Add new worker"]')
 IMPORT_WORKER = (By.XPATH, 'svg path[d*="M21 5c-1"]')
 SAVE_REPORT = (By.XPATH, 'svg path[d*="M9 11.3l3"]')
 SAVED_REPORTS = (By.XPATH, 'g path[d*="M11,12"]')
-PROJECT_TEAMS = (By.XPATH, 'g path[d*="M13.5333333"]')
+PROJECT_TEAMS = (By.XPATH, '//button/span[text()="Project Teams"]')
 SHARED = (By.XPATH, 'svg path[d*="M6.99"]')
 
 # filters
@@ -62,4 +62,16 @@ CONFIRMATION_MESSAGE_FOR_ARCH_WORKER = (By.XPATH, '''//div[@role='dialog']//p[co
 
 # edit certificates
 EDIT_CERTIFICATES_CONTROL = (By.CSS_SELECTOR, 'button[aria-label="Edit certificate"]')
+
+# save and load teams
+SAVE_TEAM = (By.XPATH, '//button/span[text()="Save team"]')
+SAVE_TEAM_NAME_FIELD = (By.CSS_SELECTOR, 'div[role="dialog"] input[type="text"]')
+SAVE_BUTTON = (By.XPATH, '//button/span[text()="Save"]')
+PROJECT_TEAMS_CHECKBOXES = (By.CSS_SELECTOR, 'div[role="dialog"] input[type="checkbox"]')
+APPLY_BUTTON = (By.XPATH, '//button/span[text()="Apply"]')
+UI_CHIPS = (By.CSS_SELECTOR, 'div[role="button"] span')
+SELECT_ALL_WORKERS = (By.CSS_SELECTOR, '#select-all-workers')
+COUNT_OF_SELECTED_WORKERS_IN_THE_GRID = (By.XPATH, '//div[text()="1 Workers selected"]')
+
+
 
