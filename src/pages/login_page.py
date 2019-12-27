@@ -25,12 +25,5 @@ class LoginPage(BasePage):
         pass
 
     def press_login(self):
-        def click_login():
-            login_button = self.driver.find_element(*locators.LOGIN)
-            login_button.click()
-        try:
-            click_login()
-        except:
-            time.sleep(3)
-            click_login()
+        self.driver.find_element(*locators.LOGIN).click()
 

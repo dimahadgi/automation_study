@@ -206,11 +206,11 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.PROJECT_TEAMS))
         project_teams.click()
 
-    def mark_checkbox(self, index=0):
+    def mark_checkbox_in_modals(self, index=0):
         checkbox = self.driver.find_elements(*locators.PROJECT_TEAMS_CHECKBOXES)
         checkbox[index].click()
 
-    def click_apply_button(self):
+    def click_apply_button_in_modals(self):
         apply_button = self.driver.find_element(*locators.APPLY_BUTTON)
         apply_button.click()
 
@@ -226,7 +226,7 @@ class MainPage(BasePage):
         select_all_checkbox = self.driver.find_element(*locators.SELECT_ALL_WORKERS)
         select_all_checkbox.click()
 
-    def verify_count_of_selected_workers(self):
+    def verify_text_of_counting_worker(self):
         try:
             WebDriverWait(self.driver, self.timeout).until(
                 EC.element_to_be_clickable(locators.COUNT_OF_SELECTED_WORKERS_IN_THE_GRID))

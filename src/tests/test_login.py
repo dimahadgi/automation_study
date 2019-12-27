@@ -202,7 +202,6 @@ class LoginTestSuite(unittest.TestCase):
         main_page.click_done_button()
         query_response = db_conn.fetch_one(sql_query)
         self.assertIsNotNone(query_response)
-        time.sleep(5)
 
     def test_verify_project_team_filter(self):
         main_page = MainPage(self.driver)
@@ -220,10 +219,10 @@ class LoginTestSuite(unittest.TestCase):
         api_helper.do_post_request("teams_creation", body)
         self.login()
         main_page.open_project_teams_filter()
-        main_page.mark_checkbox()
-        main_page.click_apply_button()
+        main_page.mark_checkbox_in_modals()
+        main_page.click_apply_button_in_modals()
         self.assertTrue(main_page.verify_chips_is_present())
         main_page.select_all_workers_in_the_grid()
-        self.assertTrue(main_page.verify_count_of_selected_workers())
+        self.assertTrue(main_page.verify_text_of_counting_worker())
 
 
