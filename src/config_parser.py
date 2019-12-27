@@ -27,6 +27,7 @@ class Config:
     api_password = config.get('api_params', 'password')
     api_host = config.get('api_params', 'host')
     api_auth_path = config.get('api_params', 'auth_path')
+    create_teams = config.get('api_params', 'create_teams')
     create_certs_path = config.get('api_params', 'create_certs_path')
     api_get_workers_id_url = config.get('api_params', 'get_workers_id_url')
     api_organization_key = config.get('api_params', 'organization_key')

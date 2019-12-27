@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
+import random
 import time
 
 from selenium import webdriver
@@ -182,3 +183,47 @@ class LoginTestSuite(unittest.TestCase):
         main_page.press_submit_button()
         query_response = db_conn.fetch_one(certificate_query)
         self.assertIsNotNone(query_response)
+
+    def test_save_teams(self):
+        db_conn = DbConnect()
+        main_page = MainPage(self.driver)
+        fake_data = generate_fake_data()
+        team_name = fake_data["cert_name"]
+        sql_query = '''select "name" from "team" where name='{}';'''.format(team_name)
+        self.login()
+        main_page.click_on_checkbox_next_to_worker()
+        main_page.click_on_checkbox_next_to_worker(3)
+        main_page.click_on_checkbox_next_to_worker(7)
+        main_page.click_on_checkbox_next_to_worker(10)
+        main_page.click_on_checkbox_next_to_worker(13)
+        main_page.click_save_team_button()
+        main_page.type_team_name_while_saving(team_name)
+        main_page.click_save_button_while_saving_team()
+        main_page.click_done_button()
+        query_response = db_conn.fetch_one(sql_query)
+        self.assertIsNotNone(query_response)
+        time.sleep(5)
+
+    def test_verify_project_team_filter(self):
+        main_page = MainPage(self.driver)
+        api_helper = ApiHelper()
+        db_conn = DbConnect()
+        fake_data = generate_fake_data()
+        team_name = fake_data["cert_name"]
+        sql_query = '''select "id" from "worker" where "employerId" = '{}';'''.format(Config.db_login)
+        query_response = db_conn.fetch_all(sql_query)
+        worker_id = random.choice(query_response)[0]
+        body = {
+            'name': team_name,
+            'workerIds': [worker_id]
+        }
+        api_helper.do_post_request("teams_creation", body)
+        self.login()
+        main_page.open_project_teams_filter()
+        main_page.mark_checkbox()
+        main_page.click_apply_button()
+        self.assertTrue(main_page.verify_chips_is_present())
+        main_page.select_all_workers_in_the_grid()
+        self.assertTrue(main_page.verify_count_of_selected_workers())
+
+

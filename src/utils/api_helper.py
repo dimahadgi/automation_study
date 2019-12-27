@@ -7,7 +7,8 @@ from src.config_parser import Config
 class ApiHelper:
     API_ROUTES = {
         'certificates_creation': Config.create_certs_path,
-        'workers_creation': Config.api_get_workers_id_url
+        'workers_creation': Config.api_get_workers_id_url,
+        'teams_creation': Config.create_teams
     }
 
     def __init__(self):
