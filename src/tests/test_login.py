@@ -4,6 +4,7 @@ import os
 import random
 import time
 
+from faker import Faker
 from selenium import webdriver
 
 from src.utils.db_postgress_helper import DbConnect
@@ -18,25 +19,23 @@ class LoginTestSuite(unittest.TestCase):
     def setUp(self):
         self.url = Config.login_url
         self.driver = webdriver.Chrome()
-        self.driver.set_window_position(0, 0)
-        self.driver.set_window_size(1700, 1000)
+        # self.driver.set_window_position(0, 0)
+        # self.driver.set_window_size(1700, 1000)
         self.driver.get(self.url)
-        self.email = Config.api_login
-        self.password = Config.api_password
 
     def tearDown(self) -> None:
         self.driver.quit()
 
-    def login(self):
+    def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)
-        login_page.specify_email(self.email)
-        login_page.specify_pass(self.password)
+        login_page.specify_email(email)
+        login_page.specify_pass(password)
         login_page.press_login()
 
     def test_login(self):
         main_page = MainPage(self.driver)
         self.login()
-        self.assertTrue(main_page.wait_main_page())
+        self.assertTrue(main_page.wait_for_grid_render())
 
     def test_add_new_worker(self):
         main_page = MainPage(self.driver)
@@ -191,11 +190,11 @@ class LoginTestSuite(unittest.TestCase):
         team_name = fake_data["cert_name"]
         sql_query = '''select "name" from "team" where name='{}';'''.format(team_name)
         self.login()
-        main_page.click_on_checkbox_next_to_worker()
+        main_page.click_on_checkbox_next_to_worker(1)
+        main_page.click_on_checkbox_next_to_worker(2)
         main_page.click_on_checkbox_next_to_worker(3)
-        main_page.click_on_checkbox_next_to_worker(7)
-        main_page.click_on_checkbox_next_to_worker(10)
-        main_page.click_on_checkbox_next_to_worker(13)
+        main_page.click_on_checkbox_next_to_worker(4)
+        main_page.click_on_checkbox_next_to_worker(5)
         main_page.click_save_team_button()
         main_page.type_team_name_while_saving(team_name)
         main_page.click_save_button_while_saving_team()
@@ -224,5 +223,43 @@ class LoginTestSuite(unittest.TestCase):
         self.assertTrue(main_page.verify_chips_is_present())
         main_page.select_all_workers_in_the_grid()
         self.assertTrue(main_page.verify_text_of_counting_worker())
+
+    def test_share_workers_to_another_employee(self):
+        fake = Faker()
+        main_page = MainPage(self.driver)
+        api_helper = ApiHelper()
+        db_conn = DbConnect()
+        fake_data = generate_fake_data()
+        fake_data2 = generate_fake_data()
+        recipient_name = fake_data["cert_name"]
+        recipient_email = Config.api_second_login
+        recipient_company_name = fake_data2["random_phrase"]
+        project_name = fake_data2["cert_name"]
+        comments = fake_data["random_phrase"]
+        for i in range(5):
+            body = {'email': fake.email(),
+                    'firstname': fake.first_name(),
+                    'lastname': fake.last_name()
+                    }
+            api_helper.do_post_request("workers_creation", body)
+        self.login()
+        main_page.click_on_checkbox_next_to_worker(1)
+        main_page.click_on_checkbox_next_to_worker(2)
+        main_page.click_on_checkbox_next_to_worker(3)
+        main_page.click_on_checkbox_next_to_worker(4)
+        main_page.click_on_checkbox_next_to_worker(5)
+        main_page.click_share_team_button()
+        main_page.fill_recipient_name_while_sharing(recipient_name)
+        main_page.fill_recipient_email_while_sharing(recipient_email)
+        main_page.fill_recipient_company_name_while_sharing(recipient_company_name)
+        main_page.fill_project_name_while_sharing(project_name)
+        main_page.fill_comments_for_recipient_while_sharing(comments)
+        main_page.click_share_button_while_sharing()
+        main_page.click_done_button()
+        main_page.click_sign_out()
+        self.login(Config.api_second_login)
+        self.assertTrue(main_page.wait_for_grid_render())
+
+
 
 

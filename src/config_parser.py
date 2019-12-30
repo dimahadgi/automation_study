@@ -23,7 +23,8 @@ class Config:
     db_login = config.get('db_params', 'login')
 
     # API parameters
-    api_login = config.get('api_params', 'login')
+    api_first_login = config.get('api_params', 'first_login')
+    api_second_login = config.get('api_params', 'second_login')
     api_password = config.get('api_params', 'password')
     api_host = config.get('api_params', 'host')
     api_auth_path = config.get('api_params', 'auth_path')
