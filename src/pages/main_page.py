@@ -3,17 +3,17 @@ import time
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
 
 from src.pages.base_page import BasePage
 from src.locators import main_page_locators as locators
 
 
 class MainPage(BasePage):
-    def wait_main_page(self):
+    def wait_for_grid_render(self):
         try:
             WebDriverWait(self.driver, self.timeout).until(
-                EC.element_to_be_clickable(locators.CERTIFICATES_TAB))
+                EC.element_to_be_clickable(locators.GRID))
             return True
         except NoSuchElementException:
             return False
@@ -164,10 +164,16 @@ class MainPage(BasePage):
                 EC.element_to_be_clickable(locators.WAIT_FOR_CONF_MESSAGE_ON_EDIT))
 
     def click_on_checkbox_next_to_worker(self, index=0):
-        WebDriverWait(self.driver, self.timeout).until(
-            EC.element_to_be_clickable(locators.CHECKBOXES_NEXT_TO_WORKERS_IN_GRID))
-        checkbox_in_grid = self.driver.find_elements(*locators.CHECKBOXES_NEXT_TO_WORKERS_IN_GRID)
-        checkbox_in_grid[index].click()
+        def mark_checkbox():
+            self.driver.find_elements(*locators.CHECKBOXES_NEXT_TO_WORKERS_IN_GRID)[index].click()
+        try:
+            mark_checkbox()
+        except ElementClickInterceptedException:
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.WORKER_PROFILE))
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.CLOSE_PROFILE_CONTROL)).click()
+            mark_checkbox()
 
     def click_on_archive_button(self):
         archive_button = WebDriverWait(self.driver, self.timeout).until(
@@ -223,8 +229,14 @@ class MainPage(BasePage):
             return False
 
     def select_all_workers_in_the_grid(self):
-        select_all_checkbox = self.driver.find_element(*locators.SELECT_ALL_WORKERS)
-        select_all_checkbox.click()
+        def select_workers():
+            select_all_checkbox = self.driver.find_element(*locators.SELECT_ALL_WORKERS)
+            select_all_checkbox.click()
+        try:
+            select_workers()
+        except:
+            time.sleep(3)
+            select_workers()
 
     def verify_text_of_counting_worker(self):
         try:
@@ -234,7 +246,45 @@ class MainPage(BasePage):
         except NoSuchElementException:
             return False
 
+    def click_share_team_button(self):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SHARE_TEAM_BUTTON))
+        save_team.click()
 
+    def fill_recipient_name_while_sharing(self, recipient_name):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.RECIPIENT_NAME_FIELD))
+        save_team.send_keys(recipient_name)
+
+    def fill_recipient_email_while_sharing(self , email):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.RECIPIENT_EMAIL_FIELD))
+        save_team.send_keys(email)
+
+    def fill_recipient_company_name_while_sharing(self, company_name):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.RECIPIENT_COMPANY_FIELD))
+        save_team.send_keys(company_name)
+
+    def fill_comments_for_recipient_while_sharing(self, comments_for_recipient):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.COMMENTS_FIELD_WHILE_SHARING))
+        save_team.send_keys(comments_for_recipient)
+
+    def fill_project_name_while_sharing(self, project_name):
+        save_team = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.PROJECT_NAME_FIELD))
+        save_team.send_keys(project_name)
+
+    def click_share_button_while_sharing(self):
+        share_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SHARE_BUTTON_WHILE_SHARING))
+        share_button.click()
+
+    def click_sign_out(self):
+        sign_out_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SIGN_OUT))
+        sign_out_button.click()
 
 
 
