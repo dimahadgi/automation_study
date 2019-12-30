@@ -26,7 +26,7 @@ class LoginTestSuite(unittest.TestCase):
     def tearDown(self) -> None:
         self.driver.quit()
 
-    def login(self, email=Config.api_login, password=Config.api_password):
+    def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)
         login_page.specify_email(email)
         login_page.specify_pass(password)

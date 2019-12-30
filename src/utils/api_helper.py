@@ -14,7 +14,7 @@ class ApiHelper:
     def __init__(self):
         self.auth_url = os.path.join(Config.api_host, Config.api_auth_path)
         self.organization_key = Config.api_organization_key
-        self.login = Config.api_login
+        self.login = Config.api_first_login
         self.password = Config.api_password
         self.auth_token = self.auth_get_token()
         self.header = {'Authorization': 'bln type=session,version=1,token="{}"'.format(self.auth_token)}
