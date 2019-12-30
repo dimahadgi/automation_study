@@ -44,7 +44,6 @@ class LoginTestSuite(unittest.TestCase):
         email = fake_data["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(email)
         self.login()
-        main_page.wait_for_grid_render()
         main_page.press_add_new_worker()
         main_page.enter_email_address(email)
         main_page.press_search_emails()
@@ -70,7 +69,6 @@ class LoginTestSuite(unittest.TestCase):
                 }
         api_helper.do_post_request("workers_creation", body)
         self.login()
-        main_page.wait_for_grid_render()
         main_page.specify_search(fake_email)
         main_page.press_search_button()
         main_page.click_on_worker_name_in_grid()
@@ -97,7 +95,6 @@ class LoginTestSuite(unittest.TestCase):
                 }
         api_helper.do_post_request("workers_creation", body)
         self.login()
-        main_page.wait_for_grid_render()
         main_page.specify_search(email)
         main_page.press_search_button()
         main_page.click_on_checkbox_next_to_worker()
@@ -174,7 +171,6 @@ class LoginTestSuite(unittest.TestCase):
         api_helper.do_post_request('certificates_creation', cert_body)
         # edit certificate via UI
         self.login()
-        main_page.wait_for_grid_render()
         main_page.specify_search(email)
         main_page.press_search_button()
         main_page.click_on_worker_name_in_grid()
@@ -194,7 +190,6 @@ class LoginTestSuite(unittest.TestCase):
         team_name = fake_data["cert_name"]
         sql_query = '''select "name" from "team" where name='{}';'''.format(team_name)
         self.login()
-        main_page.wait_for_grid_render()
         main_page.click_on_checkbox_next_to_worker(1)
         main_page.click_on_checkbox_next_to_worker(2)
         main_page.click_on_checkbox_next_to_worker(3)
@@ -222,7 +217,6 @@ class LoginTestSuite(unittest.TestCase):
         }
         api_helper.do_post_request("teams_creation", body)
         self.login()
-        main_page.wait_for_grid_render()
         main_page.open_project_teams_filter()
         main_page.mark_checkbox_in_modals()
         main_page.click_apply_button_in_modals()
@@ -249,7 +243,6 @@ class LoginTestSuite(unittest.TestCase):
                     }
             api_helper.do_post_request("workers_creation", body)
         self.login()
-        main_page.wait_for_grid_render()
         main_page.click_on_checkbox_next_to_worker(1)
         main_page.click_on_checkbox_next_to_worker(2)
         main_page.click_on_checkbox_next_to_worker(3)

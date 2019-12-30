@@ -165,6 +165,8 @@ class MainPage(BasePage):
 
     def click_on_checkbox_next_to_worker(self, index=0):
         def mark_checkbox():
+            WebDriverWait(self.driver, self.timeout).until(
+                EC.element_to_be_clickable(locators.GRID))
             self.driver.find_elements(*locators.CHECKBOXES_NEXT_TO_WORKERS_IN_GRID)[index].click()
         try:
             mark_checkbox()
@@ -285,6 +287,22 @@ class MainPage(BasePage):
         sign_out_button = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.SIGN_OUT))
         sign_out_button.click()
+
+    def click_sync_button(self):
+        sync_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SYNC_BUTTON))
+        sync_button.click()
+
+    def wait_for_sync(self):
+        sync_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.REFRESH_SYNC))
+        sync_button.click()
+
+    def click_download_csv_button(self):
+        download_csv = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.REFRESH_SYNC))
+        download_csv.click()
+
 
 
 

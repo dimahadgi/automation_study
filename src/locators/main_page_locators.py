@@ -23,6 +23,7 @@ CERTIFICATE_STATUS_FILTER = (By.XPATH, '//button/span[text()="Certificate status
 COURSE_FILTER = (By.XPATH, '//button/span[text()="Course"]')
 TRADES_FILTER = (By.XPATH, '//button/span[text()="Trade"]')
 SYNC_BUTTON = (By.XPATH, '//button/span[text()="Sync"]')
+REFRESH_SYNC = (By.XPATH, '//button/span[text()="Click refresh to view the latest certificates."]')
 
 # add new worker test
 EMAIL_ADDRESS_FIELD = (By.CSS_SELECTOR, 'form div [type="email"]')
@@ -85,3 +86,5 @@ PROJECT_NAME_FIELD = (By.NAME, 'title')
 COMMENTS_FIELD_WHILE_SHARING = (By.NAME, 'recipientComments')
 SHARE_BUTTON_WHILE_SHARING = (By.XPATH, '//button/span[text()="Share"]')
 CLOSE_PROFILE_CONTROL = (By.CSS_SELECTOR, 'svg path[d*="M19 6.41"]')
+
+DOWNLOAD_CSV_BUTTON = (By.CSS_SELECTOR, 'button[id="download-csv"]')
