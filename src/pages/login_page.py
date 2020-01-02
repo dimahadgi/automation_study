@@ -1,7 +1,6 @@
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from src.config_parser import Config
 from src.pages.base_page import BasePage
 from src.locators import login_locators as locators
 
@@ -18,4 +17,10 @@ class LoginPage(BasePage):
         pwd_field.send_keys(password)
 
     def press_login(self):
-        self.driver.find_element(*locators.LOGIN).click()
+        login_button = self.driver.find_element(*locators.LOGIN)
+        login_button.click()
+        check_login_button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(locators.GRID))
+        if not check_login_button:
+            print("login button is not pressed, clicking second time")
+            self.driver.find_element(*locators.LOGIN).click()

@@ -300,7 +300,7 @@ class MainPage(BasePage):
 
     def click_download_csv_button(self):
         download_csv = WebDriverWait(self.driver, self.timeout).until(
-            EC.element_to_be_clickable(locators.REFRESH_SYNC))
+            EC.element_to_be_clickable(locators.DOWNLOAD_CSV_BUTTON))
         download_csv.click()
 
 

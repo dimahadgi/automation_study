@@ -2,6 +2,8 @@
 import unittest
 import os
 import random
+import glob
+import csv
 import time
 
 from faker import Faker
@@ -13,14 +15,21 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
+from src.utils.helpers import parse_csv_file
 
 
 class LoginTestSuite(unittest.TestCase):
     def setUp(self):
         self.url = Config.login_url
-        self.driver = webdriver.Chrome()
-        # self.driver.set_window_position(0, 0)
-        # self.driver.set_window_size(1700, 1000)
+        self.options = webdriver.ChromeOptions()
+        self.download_path = os.path.join(os.path.abspath('..'), 'tmp')
+        self.options.add_experimental_option("prefs", {
+            "download.default_directory": self.download_path,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": True
+        })
+        self.driver = webdriver.Chrome(chrome_options=self.options)
         self.driver.get(self.url)
 
     def tearDown(self) -> None:
@@ -260,6 +269,30 @@ class LoginTestSuite(unittest.TestCase):
         self.login(Config.api_second_login)
         self.assertTrue(main_page.wait_for_grid_render())
 
+    def test_sync_button(self):
+        main_page = MainPage(self.driver)
+        self.login()
+        main_page.click_sync_button()
+        main_page.wait_for_sync()
+        self.assertTrue(main_page.wait_for_grid_render())
+
+    def test_download_csv(self):
+        main_page = MainPage(self.driver)
+        db_conn = DbConnect()
+        self.login()
+        main_page.click_download_csv_button()
+        sql_query = '''select count(email) 
+        from worker where "employerId"='{}' and archived='False';'''.format(Config.db_login)
+        try:
+            parse_csv_file()
+        except:
+            time.sleep(1)
+            parse_csv_file()
+        query_response = db_conn.fetch_one(sql_query)
+        self.assertEqual(parse_csv_file(), query_response[0])
+        list_csv_for_remove = glob.glob(self.download_path + '\\*.csv')
+        for csv_files in list_csv_for_remove:
+            os.remove(csv_files)
 
 
 
