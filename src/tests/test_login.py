@@ -3,7 +3,6 @@ import unittest
 import os
 import random
 import glob
-import csv
 import time
 
 from faker import Faker
@@ -34,6 +33,8 @@ class LoginTestSuite(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.driver.quit()
+        list_csv_for_remove = glob.glob(self.download_path + '\\*.csv')
+        [os.remove(csv_file) for csv_file in list_csv_for_remove]
 
     def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)
@@ -283,16 +284,5 @@ class LoginTestSuite(unittest.TestCase):
         main_page.click_download_csv_button()
         sql_query = '''select count(email) 
         from worker where "employerId"='{}' and archived='False';'''.format(Config.db_login)
-        try:
-            parse_csv_file()
-        except:
-            time.sleep(1)
-            parse_csv_file()
         query_response = db_conn.fetch_one(sql_query)
         self.assertEqual(parse_csv_file(), query_response[0])
-        list_csv_for_remove = glob.glob(self.download_path + '\\*.csv')
-        for csv_files in list_csv_for_remove:
-            os.remove(csv_files)
-
-
-

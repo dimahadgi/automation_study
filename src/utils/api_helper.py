@@ -2,6 +2,7 @@ import requests
 import os
 
 from src.config_parser import Config
+from requests.exceptions import HTTPError
 
 
 class ApiHelper:
@@ -29,12 +30,28 @@ class ApiHelper:
         return response.json().get('token')
 
     def do_get_request(self, url_part):
-        response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header)
-        return response
+        try:
+            response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header)
+            response.raise_for_status()
+            return response
+        except HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            raise
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            raise
 
     def do_post_request(self, url_part, body):
-        response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header, json=body)
-        return response
+        try:
+            response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header, json=body)
+            response.raise_for_status()
+            return response
+        except HTTPError as http_err:
+            print(f'HTTP error occurred: {http_err}')
+            raise
+        except Exception as err:
+            print(f'Other error occurred: {err}')
+            raise
 
 
 if __name__ == "__main__":
