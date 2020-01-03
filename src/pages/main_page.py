@@ -215,6 +215,8 @@ class MainPage(BasePage):
         project_teams.click()
 
     def mark_checkbox_in_modals(self, index=0):
+        WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.PROJECT_TEAMS_HEADER))
         checkbox = self.driver.find_elements(*locators.PROJECT_TEAMS_CHECKBOXES)
         checkbox[index].click()
 

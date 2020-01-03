@@ -34,11 +34,9 @@ class ApiHelper:
             response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header)
             response.raise_for_status()
             return response
-        except HTTPError as http_err:
-            print(f'HTTP error occurred: {http_err}')
+        except HTTPError:
             raise
-        except Exception as err:
-            print(f'Other error occurred: {err}')
+        except Exception:
             raise
 
     def do_post_request(self, url_part, body):
@@ -46,11 +44,9 @@ class ApiHelper:
             response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header, json=body)
             response.raise_for_status()
             return response
-        except HTTPError as http_err:
-            print(f'HTTP error occurred: {http_err}')
+        except HTTPError:
             raise
-        except Exception as err:
-            print(f'Other error occurred: {err}')
+        except Exception:
             raise
 
 

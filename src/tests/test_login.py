@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
-import random
 import glob
-import time
 
 from faker import Faker
 from selenium import webdriver
@@ -14,7 +12,7 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
-from src.utils.helpers import parse_csv_file
+from src.utils.helpers import parse_csv_file, create_worker
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -98,7 +96,6 @@ class LoginTestSuite(unittest.TestCase):
         fake_data = generate_fake_data()
         email = fake_data["email"]
         sql_query = """select "email" from worker where email='{}' and archived='true';""".format(email)
-        # create worker
         body = {'email': email,
                 'firstname': fake_data["first_name"],
                 'lastname': fake_data["last_name"]
@@ -156,12 +153,9 @@ class LoginTestSuite(unittest.TestCase):
         last_name = fake_data["last_name"]
         image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
         query = """select "id" from worker where email='{}';""".format(email)
-        # create worker
         worker_body = {'email': email, 'firstname': first_name, 'lastname': last_name}
         api_helper.do_post_request('workers_creation', worker_body)
-        # get id for this worker
         worker_id = db_conn.fetch_one(query)[0]
-        # add certificate to this worker
         cert_body = {'courseName': fake_data["cert_name"],
                      'description': fake_data["random_phrase"],
                      'expiration': "2030-11-05T16:01:38.433Z",
@@ -179,7 +173,6 @@ class LoginTestSuite(unittest.TestCase):
                                    "Additional Certificate Details after EDITING",
                                    "Training Provider Name after EDITING", image_file)
         api_helper.do_post_request('certificates_creation', cert_body)
-        # edit certificate via UI
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -215,12 +208,9 @@ class LoginTestSuite(unittest.TestCase):
     def test_verify_project_team_filter(self):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        db_conn = DbConnect()
         fake_data = generate_fake_data()
         team_name = fake_data["cert_name"]
-        sql_query = '''select "id" from "worker" where "employerId" = '{}';'''.format(Config.db_login)
-        query_response = db_conn.fetch_all(sql_query)
-        worker_id = random.choice(query_response)[0]
+        worker_id = create_worker()
         body = {
             'name': team_name,
             'workerIds': [worker_id]
