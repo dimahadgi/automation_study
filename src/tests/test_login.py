@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
-import glob
 
 from faker import Faker
 from selenium import webdriver
@@ -12,7 +11,7 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
-from src.utils.helpers import parse_csv_file, create_worker
+from src.utils.helpers import parse_csv_file, create_worker, clear_download_folder
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -31,8 +30,7 @@ class LoginTestSuite(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.driver.quit()
-        list_csv_for_remove = glob.glob(self.download_path + '\\*.csv')
-        [os.remove(csv_file) for csv_file in list_csv_for_remove]
+        clear_download_folder()
 
     def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)

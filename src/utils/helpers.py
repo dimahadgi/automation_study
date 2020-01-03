@@ -1,6 +1,7 @@
 import csv
 import glob
 import time
+import os
 
 from src.utils.api_helper import Config
 from src.utils.api_helper import ApiHelper
@@ -32,3 +33,9 @@ def create_worker():
             }
     response = api_helper.do_post_request("workers_creation", body)
     return response.json().get('id')
+
+
+def clear_download_folder():
+    download_path = os.path.join(os.path.abspath('..'), 'tmp')
+    list_csv_for_remove = glob.glob('{}\\*.csv'.format(download_path))
+    [os.remove(csv_file) for csv_file in list_csv_for_remove]
