@@ -305,6 +305,20 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.DOWNLOAD_CSV_BUTTON))
         download_csv.click()
 
+    def search_for_names_in_grid(self, name):
+        element = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.WORKERS_COLUMN))
+        html_code = element.get_attribute('innerHTML')
+        x = name in html_code
+        return x
+
+    def clear_search_filed(self):
+        search_field = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SEARCH))
+        search_field.send_keys(Keys.CONTROL + "a")
+        search_field.send_keys(Keys.DELETE)
+        search_field.send_keys(Keys.ENTER)
+
 
 
 

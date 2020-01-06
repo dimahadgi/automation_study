@@ -8,7 +8,7 @@ from src.utils.api_helper import ApiHelper
 from src.utils.data_generator import generate_fake_data
 
 
-def parse_csv_file():
+def get_count_of_emails_in_csv():
     def count_unique_emails():
         list_of_files = glob.glob('{}\\report*.csv'.format(Config.download_path))
         with open(list_of_files[0], 'r') as csv_report:
