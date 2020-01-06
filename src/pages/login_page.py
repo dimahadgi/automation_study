@@ -5,7 +5,6 @@ from retrying import retry
 
 from src.pages.base_page import BasePage
 from src.locators import login_locators as locators
-import time
 
 
 class LoginPage(BasePage):

@@ -9,17 +9,17 @@ from src.utils.data_generator import generate_fake_data
 
 
 def parse_csv_file():
-    def count_emails():
+    def count_unique_emails():
         list_of_files = glob.glob('{}\\report*.csv'.format(Config.download_path))
-        with open(list_of_files[0], 'r') as file:
-            csv_file = csv.DictReader(file)
+        with open(list_of_files[0], 'r') as csv_report:
+            csv_file = csv.DictReader(csv_report)
             emails_list = [dict(row).get('Email address') for row in csv_file]
             return len(set(emails_list))
     try:
-        emails_number = count_emails()
+        emails_number = count_unique_emails()
     except:
         time.sleep(1)
-        emails_number = count_emails()
+        emails_number = count_unique_emails()
     return emails_number
 
 
@@ -31,7 +31,7 @@ def create_worker():
             'firstname': fake_data["first_name"],
             'lastname': fake_data["last_name"]
             }
-    response = api_helper.do_post_request("workers_creation", body)
+    response = api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
     return response.json().get('id')
 
 

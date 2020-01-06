@@ -29,19 +29,16 @@ class ApiHelper:
                                        'password': self.password})
         return response.json().get('token')
 
-    def do_get_request(self, url_part):
+    def make_http_request(self, method_type, url_part, body=None):
         try:
-            response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header)
-            response.raise_for_status()
-            return response
-        except HTTPError:
-            raise
-        except Exception:
-            raise
-
-    def do_post_request(self, url_part, body):
-        try:
-            response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header, json=body)
+            if method_type == "POST":
+                response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]),
+                                         headers=self.header, json=body)
+            elif method_type == "GET":
+                response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]),
+                                        headers=self.header)
+            else:
+                raise NotImplementedError
             response.raise_for_status()
             return response
         except HTTPError:

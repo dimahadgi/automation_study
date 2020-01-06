@@ -18,9 +18,8 @@ class LoginTestSuite(unittest.TestCase):
     def setUp(self):
         self.url = Config.login_url
         self.options = webdriver.ChromeOptions()
-        self.download_path = os.path.join(os.path.abspath('..'), 'tmp')
         self.options.add_experimental_option("prefs", {
-            "download.default_directory": self.download_path,
+            "download.default_directory": Config.download_path,
             "download.prompt_for_download": False,
             "download.directory_upgrade": True,
             "safebrowsing.enabled": True
@@ -73,7 +72,7 @@ class LoginTestSuite(unittest.TestCase):
                 'firstname': fake_data["first_name"],
                 'lastname': fake_data["last_name"]
                 }
-        api_helper.do_post_request("workers_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.specify_search(fake_email)
         main_page.press_search_button()
@@ -98,7 +97,7 @@ class LoginTestSuite(unittest.TestCase):
                 'firstname': fake_data["first_name"],
                 'lastname': fake_data["last_name"]
                 }
-        api_helper.do_post_request("workers_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -124,7 +123,7 @@ class LoginTestSuite(unittest.TestCase):
         sql_query = '''select "courseName" from "certificate" 
                 where "workerId"=(select "id" from worker where email='{}') 
                 and "courseName"='{}';'''.format(email, cert_name)
-        api_helper.do_post_request("workers_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -152,7 +151,7 @@ class LoginTestSuite(unittest.TestCase):
         image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
         query = """select "id" from worker where email='{}';""".format(email)
         worker_body = {'email': email, 'firstname': first_name, 'lastname': last_name}
-        api_helper.do_post_request('workers_creation', worker_body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=worker_body)
         worker_id = db_conn.fetch_one(query)[0]
         cert_body = {'courseName': fake_data["cert_name"],
                      'description': fake_data["random_phrase"],
@@ -170,7 +169,7 @@ class LoginTestSuite(unittest.TestCase):
         and "file"='{}';""".format(email, "Certificate name after EDITING",
                                    "Additional Certificate Details after EDITING",
                                    "Training Provider Name after EDITING", image_file)
-        api_helper.do_post_request('certificates_creation', cert_body)
+        api_helper.make_http_request(method_type="POST", url_part="certificates_creation", body=cert_body)
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -213,7 +212,7 @@ class LoginTestSuite(unittest.TestCase):
             'name': team_name,
             'workerIds': [worker_id]
         }
-        api_helper.do_post_request("teams_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="teams_creation", body=body)
         self.login()
         main_page.open_project_teams_filter()
         main_page.mark_checkbox_in_modals()
@@ -239,7 +238,7 @@ class LoginTestSuite(unittest.TestCase):
                     'firstname': fake.first_name(),
                     'lastname': fake.last_name()
                     }
-            api_helper.do_post_request("workers_creation", body)
+            api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.click_on_checkbox_next_to_worker(1)
         main_page.click_on_checkbox_next_to_worker(2)
