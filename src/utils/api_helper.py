@@ -2,6 +2,7 @@ import requests
 import os
 
 from src.config_parser import Config
+from requests.exceptions import HTTPError
 
 
 class ApiHelper:
@@ -28,13 +29,22 @@ class ApiHelper:
                                        'password': self.password})
         return response.json().get('token')
 
-    def do_get_request(self, url_part):
-        response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header)
-        return response
-
-    def do_post_request(self, url_part, body):
-        response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]), headers=self.header, json=body)
-        return response
+    def make_http_request(self, method_type, url_part, body=None):
+        try:
+            if method_type == "POST":
+                response = requests.post(os.path.join(self.url, self.API_ROUTES[url_part]),
+                                         headers=self.header, json=body)
+            elif method_type == "GET":
+                response = requests.get(os.path.join(self.url, self.API_ROUTES[url_part]),
+                                        headers=self.header)
+            else:
+                raise NotImplementedError
+            response.raise_for_status()
+            return response
+        except HTTPError:
+            raise
+        except Exception:
+            raise
 
 
 if __name__ == "__main__":

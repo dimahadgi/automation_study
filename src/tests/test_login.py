@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
-import random
-import time
 
 from faker import Faker
 from selenium import webdriver
@@ -13,18 +11,25 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
+from src.utils.helpers import parse_csv_file, create_worker, clear_download_folder
 
 
 class LoginTestSuite(unittest.TestCase):
     def setUp(self):
         self.url = Config.login_url
-        self.driver = webdriver.Chrome()
-        # self.driver.set_window_position(0, 0)
-        # self.driver.set_window_size(1700, 1000)
+        self.options = webdriver.ChromeOptions()
+        self.options.add_experimental_option("prefs", {
+            "download.default_directory": Config.download_path,
+            "download.prompt_for_download": False,
+            "download.directory_upgrade": True,
+            "safebrowsing.enabled": True
+        })
+        self.driver = webdriver.Chrome(chrome_options=self.options)
         self.driver.get(self.url)
 
     def tearDown(self) -> None:
         self.driver.quit()
+        clear_download_folder()
 
     def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)
@@ -67,7 +72,7 @@ class LoginTestSuite(unittest.TestCase):
                 'firstname': fake_data["first_name"],
                 'lastname': fake_data["last_name"]
                 }
-        api_helper.do_post_request("workers_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.specify_search(fake_email)
         main_page.press_search_button()
@@ -88,12 +93,11 @@ class LoginTestSuite(unittest.TestCase):
         fake_data = generate_fake_data()
         email = fake_data["email"]
         sql_query = """select "email" from worker where email='{}' and archived='true';""".format(email)
-        # create worker
         body = {'email': email,
                 'firstname': fake_data["first_name"],
                 'lastname': fake_data["last_name"]
                 }
-        api_helper.do_post_request("workers_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -119,7 +123,7 @@ class LoginTestSuite(unittest.TestCase):
         sql_query = '''select "courseName" from "certificate" 
                 where "workerId"=(select "id" from worker where email='{}') 
                 and "courseName"='{}';'''.format(email, cert_name)
-        api_helper.do_post_request("workers_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -146,12 +150,9 @@ class LoginTestSuite(unittest.TestCase):
         last_name = fake_data["last_name"]
         image_file = "efb9c5a7-862b-46ca-9ce3-7c8110d0cbff_share rules.png"
         query = """select "id" from worker where email='{}';""".format(email)
-        # create worker
         worker_body = {'email': email, 'firstname': first_name, 'lastname': last_name}
-        api_helper.do_post_request('workers_creation', worker_body)
-        # get id for this worker
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=worker_body)
         worker_id = db_conn.fetch_one(query)[0]
-        # add certificate to this worker
         cert_body = {'courseName': fake_data["cert_name"],
                      'description': fake_data["random_phrase"],
                      'expiration': "2030-11-05T16:01:38.433Z",
@@ -168,8 +169,7 @@ class LoginTestSuite(unittest.TestCase):
         and "file"='{}';""".format(email, "Certificate name after EDITING",
                                    "Additional Certificate Details after EDITING",
                                    "Training Provider Name after EDITING", image_file)
-        api_helper.do_post_request('certificates_creation', cert_body)
-        # edit certificate via UI
+        api_helper.make_http_request(method_type="POST", url_part="certificates_creation", body=cert_body)
         self.login()
         main_page.specify_search(email)
         main_page.press_search_button()
@@ -205,17 +205,14 @@ class LoginTestSuite(unittest.TestCase):
     def test_verify_project_team_filter(self):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        db_conn = DbConnect()
         fake_data = generate_fake_data()
         team_name = fake_data["cert_name"]
-        sql_query = '''select "id" from "worker" where "employerId" = '{}';'''.format(Config.db_login)
-        query_response = db_conn.fetch_all(sql_query)
-        worker_id = random.choice(query_response)[0]
+        worker_id = create_worker()
         body = {
             'name': team_name,
             'workerIds': [worker_id]
         }
-        api_helper.do_post_request("teams_creation", body)
+        api_helper.make_http_request(method_type="POST", url_part="teams_creation", body=body)
         self.login()
         main_page.open_project_teams_filter()
         main_page.mark_checkbox_in_modals()
@@ -241,7 +238,7 @@ class LoginTestSuite(unittest.TestCase):
                     'firstname': fake.first_name(),
                     'lastname': fake.last_name()
                     }
-            api_helper.do_post_request("workers_creation", body)
+            api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
         self.login()
         main_page.click_on_checkbox_next_to_worker(1)
         main_page.click_on_checkbox_next_to_worker(2)
@@ -260,6 +257,19 @@ class LoginTestSuite(unittest.TestCase):
         self.login(Config.api_second_login)
         self.assertTrue(main_page.wait_for_grid_render())
 
+    def test_sync_button(self):
+        main_page = MainPage(self.driver)
+        self.login()
+        main_page.click_sync_button()
+        main_page.wait_for_sync()
+        self.assertTrue(main_page.wait_for_grid_render())
 
-
-
+    def test_download_csv(self):
+        main_page = MainPage(self.driver)
+        db_conn = DbConnect()
+        self.login()
+        main_page.click_download_csv_button()
+        sql_query = '''select count(email) 
+        from worker where "employerId"='{}' and archived='False';'''.format(Config.db_login)
+        query_response = db_conn.fetch_one(sql_query)
+        self.assertEqual(parse_csv_file(), query_response[0])

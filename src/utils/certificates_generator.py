@@ -29,7 +29,7 @@ class CertificatesGenerator:
 
     def get_workers_id(self):
         if Config.env == "prod":
-            workers_list = self.api_helper.do_get_request("workers_creation").json()
+            workers_list = self.api_helper.make_http_request(method_type="GET", url_part="workers_creation").json()
             return [d.get('id') for d in workers_list]
         else:
             db_conn = DbConnect()

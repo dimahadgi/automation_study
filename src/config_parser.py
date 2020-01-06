@@ -7,6 +7,7 @@ class Config:
     current_dir = os.path.dirname(__file__)
     file_path = os.path.join(current_dir, '..', "conf.ini")
     config.read(file_path)
+    download_path = os.path.join(os.path.abspath('..'), 'tmp')
 
     # login_url
     login_url = config.get('login_params', 'url')

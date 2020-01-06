@@ -18,7 +18,7 @@ class BasePage:
 
     def __init__(self, driver):
         self.driver = driver
-        self.timeout = 60
+        self.timeout = 30
 
     def refresh_browser(self):
         self.driver.refresh()
