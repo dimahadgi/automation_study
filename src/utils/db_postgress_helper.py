@@ -33,3 +33,7 @@ class DbConnect:
         self.cursor.execute(sql_query)
         record = self.cursor.fetchone()
         return record
+
+    def write_to_db(self, sql_query):
+        self.cursor.execute(sql_query)
+        self.cursor.connection.commit()

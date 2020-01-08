@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
+import time
 
 from faker import Faker
 from selenium import webdriver
@@ -11,7 +12,7 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
-from src.utils.helpers import parse_csv_file, create_worker, clear_download_folder
+from src.utils.helpers import get_count_of_emails_in_csv, create_worker, clear_download_folder, set_no_primary_report
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -26,6 +27,7 @@ class LoginTestSuite(unittest.TestCase):
         })
         self.driver = webdriver.Chrome(chrome_options=self.options)
         self.driver.get(self.url)
+        set_no_primary_report()
 
     def tearDown(self) -> None:
         self.driver.quit()
@@ -225,7 +227,6 @@ class LoginTestSuite(unittest.TestCase):
         fake = Faker()
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        db_conn = DbConnect()
         fake_data = generate_fake_data()
         fake_data2 = generate_fake_data()
         recipient_name = fake_data["cert_name"]
@@ -272,4 +273,36 @@ class LoginTestSuite(unittest.TestCase):
         sql_query = '''select count(email) 
         from worker where "employerId"='{}' and archived='False';'''.format(Config.db_login)
         query_response = db_conn.fetch_one(sql_query)
-        self.assertEqual(parse_csv_file(), query_response[0])
+        self.assertEqual(get_count_of_emails_in_csv(), query_response[0])
+
+    def test_validate_main_search(self):
+        main_page = MainPage(self.driver)
+        api_helper = ApiHelper()
+        fake_data = generate_fake_data()
+        email = fake_data["email"]
+        f_name = "{} {}".format(fake_data["name_prefix"], fake_data["first_name"])
+        l_name = fake_data["last_name"]
+        first_and_last_name = "{} {}".format(f_name, l_name)
+        employee_id = fake_data["random_number"]
+        body = {'email': email, 'firstname': f_name, 'lastname': l_name, 'employeeId': employee_id}
+        api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
+        self.login()
+        # search by first and last name
+        main_page.specify_search(first_and_last_name)
+        main_page.press_search_button()
+        self.assertTrue(main_page.check_name_exist_in_grid(first_and_last_name))
+        # search by email
+        main_page.clear_search_filed()
+        main_page.specify_search(email)
+        main_page.press_search_button()
+        self.assertTrue(main_page.check_name_exist_in_grid(first_and_last_name))
+        # search by worker's employee id
+        main_page.clear_search_filed()
+        main_page.specify_search(employee_id)
+        main_page.press_search_button()
+        self.assertTrue(main_page.check_name_exist_in_grid(first_and_last_name))
+
+
+
+
+
