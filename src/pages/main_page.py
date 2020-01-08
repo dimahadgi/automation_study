@@ -305,7 +305,7 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.DOWNLOAD_CSV_BUTTON))
         download_csv.click()
 
-    def search_for_names_in_grid(self, name):
+    def check_name_exist_in_grid(self, name):
         element = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.WORKERS_COLUMN))
         html_code = element.get_attribute('innerHTML')

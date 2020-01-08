@@ -12,7 +12,7 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
-from src.utils.helpers import get_count_of_emails_in_csv, create_worker, clear_download_folder
+from src.utils.helpers import get_count_of_emails_in_csv, create_worker, clear_download_folder, check_primary_report
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -27,6 +27,7 @@ class LoginTestSuite(unittest.TestCase):
         })
         self.driver = webdriver.Chrome(chrome_options=self.options)
         self.driver.get(self.url)
+        check_primary_report()
 
     def tearDown(self) -> None:
         self.driver.quit()
@@ -289,17 +290,17 @@ class LoginTestSuite(unittest.TestCase):
         # search by first and last name
         main_page.specify_search(first_and_last_name)
         main_page.press_search_button()
-        self.assertTrue(main_page.search_for_names_in_grid(first_and_last_name))
+        self.assertTrue(main_page.check_name_exist_in_grid(first_and_last_name))
         # search by email
         main_page.clear_search_filed()
         main_page.specify_search(email)
         main_page.press_search_button()
-        self.assertTrue(main_page.search_for_names_in_grid(first_and_last_name))
+        self.assertTrue(main_page.check_name_exist_in_grid(first_and_last_name))
         # search by worker's employee id
         main_page.clear_search_filed()
         main_page.specify_search(employee_id)
         main_page.press_search_button()
-        self.assertTrue(main_page.search_for_names_in_grid(first_and_last_name))
+        self.assertTrue(main_page.check_name_exist_in_grid(first_and_last_name))
 
 
 
