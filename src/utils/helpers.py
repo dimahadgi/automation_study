@@ -42,11 +42,11 @@ def clear_download_folder():
     [os.remove(csv_file) for csv_file in list_csv_for_remove]
 
 
-def check_primary_report():
+def set_no_primary_report():
     db_conn = DbConnect()
-    set_no_primary_report = '''update "report" set "primary" = 'false' where "name" = 'Confined Space Awareness';'''
-    check_primary_report_query = '''select "primary" from "report" where "name" = 'Confined Space Awareness';'''
-    query_response = db_conn.fetch_one(check_primary_report_query)
+    set_no_report_query = '''update "report" set "primary" = 'false' where "name" = 'Confined Space Awareness';'''
+    check_report_query = '''select "primary" from "report" where "name" = 'Confined Space Awareness';'''
+    query_response = db_conn.fetch_one(check_report_query)
     if query_response[0]:
-        db_conn.write_to_db(set_no_primary_report)
+        db_conn.write_to_db(set_no_report_query)
 

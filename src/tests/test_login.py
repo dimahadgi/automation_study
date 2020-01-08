@@ -12,7 +12,7 @@ from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
 from src.utils.data_generator import generate_fake_data
-from src.utils.helpers import get_count_of_emails_in_csv, create_worker, clear_download_folder, check_primary_report
+from src.utils.helpers import get_count_of_emails_in_csv, create_worker, clear_download_folder, set_no_primary_report
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -27,7 +27,7 @@ class LoginTestSuite(unittest.TestCase):
         })
         self.driver = webdriver.Chrome(chrome_options=self.options)
         self.driver.get(self.url)
-        check_primary_report()
+        set_no_primary_report()
 
     def tearDown(self) -> None:
         self.driver.quit()
