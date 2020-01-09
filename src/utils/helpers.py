@@ -62,7 +62,4 @@ class Helpers:
         if query_response:
             db_conn.write_to_db(set_no_report_query)
 
-if __name__ == "__main__":
-    helpers = Helpers()
-    helpers.set_no_primary_report()
 

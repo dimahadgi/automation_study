@@ -30,8 +30,7 @@ class LoginTestSuite(unittest.TestCase):
 
     def tearDown(self) -> None:
         self.driver.quit()
-        helpers = Helpers()
-        helpers.clear_download_folder()
+        self.helpers.clear_download_folder()
 
     def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)
