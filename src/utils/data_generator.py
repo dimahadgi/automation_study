@@ -9,15 +9,18 @@ fake = Faker()
 def generate_fake_data():
     fake_data = {
         "email": fake.email(),
+        "email2": fake.email(),
         "first_and_last_name": fake.name(),
         "first_name": fake.first_name(),
         "last_name": fake.last_name(),
         "name_prefix": fake.prefix(),
         "cert_name": fake.company(),
+        "cert_name2": fake.company(),
         "city": fake.city(),
         "country": fake.country(),
         "street_name": fake.street_name(),
         "random_phrase": fake.catch_phrase(),
+        "random_phrase2": fake.catch_phrase(),
         "random_number": fake.ean(length=13)
     }
     return fake_data
