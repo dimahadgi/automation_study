@@ -9,7 +9,6 @@ from src.pages.login_page import LoginPage
 from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
-from src.utils.data_generator import generate_fake_data
 from src.utils.helpers import Helpers
 
 
@@ -46,7 +45,7 @@ class LoginTestSuite(unittest.TestCase):
     def test_add_new_worker(self):
         main_page = MainPage(self.driver)
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         email = fake_data["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(email)
         self.login()
@@ -64,8 +63,8 @@ class LoginTestSuite(unittest.TestCase):
         db_conn = DbConnect()
         api_helper = ApiHelper()
         main_page = MainPage(self.driver)
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
+        fake_data2 = self.helpers.generate_fake_data()
         fake_email = fake_data["email"]
         new_email = fake_data2["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(new_email)
@@ -91,7 +90,7 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         email = fake_data["email"]
         sql_query = """select "email" from worker where email='{}' and archived='true';""".format(email)
         body = {'email': email,
@@ -112,8 +111,8 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
+        fake_data2 = self.helpers.generate_fake_data()
         image_path = os.path.join(os.path.abspath('..'), 'tmp', 'test.png')
         email = fake_data["email"]
         cert_name = fake_data["cert_name"]
@@ -144,8 +143,8 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
+        fake_data2 = self.helpers.generate_fake_data()
         email = fake_data["email"]
         first_name = fake_data["first_name"]
         last_name = fake_data["last_name"]
@@ -187,7 +186,7 @@ class LoginTestSuite(unittest.TestCase):
     def test_save_teams(self):
         db_conn = DbConnect()
         main_page = MainPage(self.driver)
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         team_name = fake_data["cert_name"]
         sql_query = '''select "name" from "team" where name='{}';'''.format(team_name)
         self.login()
@@ -206,7 +205,7 @@ class LoginTestSuite(unittest.TestCase):
     def test_verify_project_team_filter(self):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         team_name = fake_data["cert_name"]
         worker_id = self.helpers.create_worker()
         body = {'name': team_name, 'workerIds': [worker_id]}
@@ -221,7 +220,7 @@ class LoginTestSuite(unittest.TestCase):
 
     def test_share_workers_to_another_employee(self):
         main_page = MainPage(self.driver)
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         recipient_name = fake_data["cert_name"]
         recipient_email = Config.api_second_login
         recipient_company_name = fake_data["random_phrase2"]
@@ -275,7 +274,7 @@ class LoginTestSuite(unittest.TestCase):
     def test_validate_main_search(self):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         email = fake_data["email"]
         f_name = "{} {}".format(fake_data["name_prefix"], fake_data["first_name"])
         l_name = fake_data["last_name"]
