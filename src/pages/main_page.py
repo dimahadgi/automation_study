@@ -217,7 +217,7 @@ class MainPage(BasePage):
     def mark_checkbox_in_modals(self, index=0):
         WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.PROJECT_TEAMS_HEADER))
-        checkbox = self.driver.find_elements(*locators.PROJECT_TEAMS_CHECKBOXES)
+        checkbox = self.driver.find_elements(*locators.FILTERS_CHECKBOXES)
         checkbox[index].click()
 
     def click_apply_button_in_modals(self):
@@ -260,7 +260,7 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.RECIPIENT_NAME_FIELD))
         save_team.send_keys(recipient_name)
 
-    def fill_recipient_email_while_sharing(self , email):
+    def fill_recipient_email_while_sharing(self, email):
         save_team = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.RECIPIENT_EMAIL_FIELD))
         save_team.send_keys(email)
@@ -280,7 +280,7 @@ class MainPage(BasePage):
             EC.element_to_be_clickable(locators.PROJECT_NAME_FIELD))
         save_team.send_keys(project_name)
 
-    def click_share_button_while_sharing(self):
+    def click_share_button(self):
         share_button = WebDriverWait(self.driver, self.timeout).until(
             EC.element_to_be_clickable(locators.SHARE_BUTTON_WHILE_SHARING))
         share_button.click()
@@ -319,10 +319,13 @@ class MainPage(BasePage):
         search_field.send_keys(Keys.DELETE)
         search_field.send_keys(Keys.ENTER)
 
+    def click_shared_button(self):
+        shared_button = WebDriverWait(self.driver, self.timeout).until(
+            EC.element_to_be_clickable(locators.SHARED))
+        shared_button.click()
 
-
-
-
-
-
-
+    def mark_checkboxes_in_shared_modal(self, index=0):
+        WebDriverWait(self.driver, self.timeout).until(
+            EC.presence_of_all_elements_located(locators.FILTERS_CHECKBOXES))
+        checkbox = self.driver.find_elements(*locators.FILTERS_CHECKBOXES)
+        checkbox[index].click()

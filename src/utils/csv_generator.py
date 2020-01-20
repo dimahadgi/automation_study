@@ -34,7 +34,7 @@ def generate_data():
         fake.email(),
         fake.first_name(),
         fake.last_name(),
-        random.randint(1920, 2010),
+        random.randint(1930, 2010),
         fake.country(),
         fake.city(),
         random.choice(PROVINCE),

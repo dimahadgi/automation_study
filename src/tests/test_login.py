@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import os
-import time
 
-from faker import Faker
 from selenium import webdriver
 
 from src.utils.db_postgress_helper import DbConnect
@@ -11,8 +9,7 @@ from src.pages.login_page import LoginPage
 from src.pages.main_page import MainPage
 from src.utils.api_helper import ApiHelper
 from src.config_parser import Config
-from src.utils.data_generator import generate_fake_data
-from src.utils.helpers import get_count_of_emails_in_csv, create_worker, clear_download_folder, set_no_primary_report
+from src.utils.helpers import Helpers
 
 
 class LoginTestSuite(unittest.TestCase):
@@ -27,11 +24,12 @@ class LoginTestSuite(unittest.TestCase):
         })
         self.driver = webdriver.Chrome(chrome_options=self.options)
         self.driver.get(self.url)
-        set_no_primary_report()
+        self.helpers = Helpers()
+        self.helpers.set_no_primary_report()
 
     def tearDown(self) -> None:
         self.driver.quit()
-        clear_download_folder()
+        self.helpers.clear_download_folder()
 
     def login(self, email=Config.api_first_login, password=Config.api_password):
         login_page = LoginPage(self.driver)
@@ -47,7 +45,7 @@ class LoginTestSuite(unittest.TestCase):
     def test_add_new_worker(self):
         main_page = MainPage(self.driver)
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         email = fake_data["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(email)
         self.login()
@@ -65,8 +63,8 @@ class LoginTestSuite(unittest.TestCase):
         db_conn = DbConnect()
         api_helper = ApiHelper()
         main_page = MainPage(self.driver)
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
+        fake_data2 = self.helpers.generate_fake_data()
         fake_email = fake_data["email"]
         new_email = fake_data2["email"]
         sql_query = """select "email" from "worker" where email='{}';""".format(new_email)
@@ -92,7 +90,7 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         email = fake_data["email"]
         sql_query = """select "email" from worker where email='{}' and archived='true';""".format(email)
         body = {'email': email,
@@ -113,8 +111,8 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
+        fake_data2 = self.helpers.generate_fake_data()
         image_path = os.path.join(os.path.abspath('..'), 'tmp', 'test.png')
         email = fake_data["email"]
         cert_name = fake_data["cert_name"]
@@ -145,8 +143,8 @@ class LoginTestSuite(unittest.TestCase):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
         db_conn = DbConnect()
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
+        fake_data2 = self.helpers.generate_fake_data()
         email = fake_data["email"]
         first_name = fake_data["first_name"]
         last_name = fake_data["last_name"]
@@ -188,7 +186,7 @@ class LoginTestSuite(unittest.TestCase):
     def test_save_teams(self):
         db_conn = DbConnect()
         main_page = MainPage(self.driver)
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         team_name = fake_data["cert_name"]
         sql_query = '''select "name" from "team" where name='{}';'''.format(team_name)
         self.login()
@@ -207,13 +205,10 @@ class LoginTestSuite(unittest.TestCase):
     def test_verify_project_team_filter(self):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         team_name = fake_data["cert_name"]
-        worker_id = create_worker()
-        body = {
-            'name': team_name,
-            'workerIds': [worker_id]
-        }
+        worker_id = self.helpers.create_worker()
+        body = {'name': team_name, 'workerIds': [worker_id]}
         api_helper.make_http_request(method_type="POST", url_part="teams_creation", body=body)
         self.login()
         main_page.open_project_teams_filter()
@@ -224,22 +219,14 @@ class LoginTestSuite(unittest.TestCase):
         self.assertTrue(main_page.verify_text_of_counting_worker())
 
     def test_share_workers_to_another_employee(self):
-        fake = Faker()
         main_page = MainPage(self.driver)
-        api_helper = ApiHelper()
-        fake_data = generate_fake_data()
-        fake_data2 = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         recipient_name = fake_data["cert_name"]
         recipient_email = Config.api_second_login
-        recipient_company_name = fake_data2["random_phrase"]
-        project_name = fake_data2["cert_name"]
+        recipient_company_name = fake_data["random_phrase2"]
+        project_name = fake_data["cert_name2"]
         comments = fake_data["random_phrase"]
-        for i in range(5):
-            body = {'email': fake.email(),
-                    'firstname': fake.first_name(),
-                    'lastname': fake.last_name()
-                    }
-            api_helper.make_http_request(method_type="POST", url_part="workers_creation", body=body)
+        names_list = self.helpers.create_multiple_workers(5)
         self.login()
         main_page.click_on_checkbox_next_to_worker(1)
         main_page.click_on_checkbox_next_to_worker(2)
@@ -252,11 +239,20 @@ class LoginTestSuite(unittest.TestCase):
         main_page.fill_recipient_company_name_while_sharing(recipient_company_name)
         main_page.fill_project_name_while_sharing(project_name)
         main_page.fill_comments_for_recipient_while_sharing(comments)
-        main_page.click_share_button_while_sharing()
+        main_page.click_share_button()
         main_page.click_done_button()
         main_page.click_sign_out()
         self.login(Config.api_second_login)
         self.assertTrue(main_page.wait_for_grid_render())
+        main_page.click_shared_button()
+        main_page.mark_checkboxes_in_shared_modal()
+        main_page.click_apply_button_in_modals()
+        main_page.wait_for_grid_render()
+        self.assertTrue(main_page.check_name_exist_in_grid(names_list[0]))
+        self.assertTrue(main_page.check_name_exist_in_grid(names_list[1]))
+        self.assertTrue(main_page.check_name_exist_in_grid(names_list[2]))
+        self.assertTrue(main_page.check_name_exist_in_grid(names_list[3]))
+        self.assertTrue(main_page.check_name_exist_in_grid(names_list[4]))
 
     def test_sync_button(self):
         main_page = MainPage(self.driver)
@@ -273,12 +269,12 @@ class LoginTestSuite(unittest.TestCase):
         sql_query = '''select count(email) 
         from worker where "employerId"='{}' and archived='False';'''.format(Config.db_login)
         query_response = db_conn.fetch_one(sql_query)
-        self.assertEqual(get_count_of_emails_in_csv(), query_response[0])
+        self.assertEqual(self.helpers.get_count_of_emails_in_csv(), query_response[0])
 
     def test_validate_main_search(self):
         main_page = MainPage(self.driver)
         api_helper = ApiHelper()
-        fake_data = generate_fake_data()
+        fake_data = self.helpers.generate_fake_data()
         email = fake_data["email"]
         f_name = "{} {}".format(fake_data["name_prefix"], fake_data["first_name"])
         l_name = fake_data["last_name"]
